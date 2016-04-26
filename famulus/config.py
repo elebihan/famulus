@@ -37,7 +37,7 @@ DEFAULT_TESTS_PATH = '~/.local/share/famulus/tests'
 class Configuration:
     """Stores the configuration of the application"""
     def __init__(self):
-        self.tests_paths = [DEFAULT_TESTS_PATH]
+        self.tests_paths = [os.path.expanduser(DEFAULT_TESTS_PATH)]
 
     def load_from_file(self, filename):
         """Loads the configuration from a file
@@ -48,10 +48,9 @@ class Configuration:
         parser = ConfigParser()
         with open(filename) as f:
             parser.read_file(f)
-        value = parser.get('General', 'TestsPaths', fallback=None)
-        if value:
-            self.tests_paths += map(lambda p: os.path.expanduser(p.strip()),
-                                    value.split(','))
+        value = parser.get('General', 'TestsPaths', fallback='')
+        self.tests_paths += map(lambda p: os.path.expanduser(p.strip()),
+                                value.split(','))
 
     def save_to_file(self, filename):
         """Saves the configuration to a file
