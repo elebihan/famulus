@@ -35,8 +35,11 @@ import traceback
 from famulus import __version__
 from famulus.utils import setup_i18n
 from famulus.log import setup_logging, set_level
-from famulus.log import error
+from famulus.log import error, warning
+from famulus.config import Configuration
 from gettext import gettext as _
+
+DEFAULT_CONF_FILE = '~/.config/famulus.conf'
 
 setup_i18n()
 
@@ -54,8 +57,12 @@ class Application:
                                   action='store_true',
                                   default=False,
                                   help=_("show debug messages"))
+        self._parser.add_argument('-C', '--config',
+                                  metavar=_('FILE'),
+                                  default=os.path.expanduser(DEFAULT_CONF_FILE),
+                                  help=_('set path to configuration file'))
 
-    # Insert the program options here
+        self._config = Configuration()
 
     def run(self):
         """Run the application"""
@@ -63,6 +70,12 @@ class Application:
 
         if args.debug:
             set_level('DEBUG')
+
+        if os.path.exists(args.config):
+            self._config.load_from_file(args.config)
+        else:
+            warning(_("Can not find configuration file. Using defaults."))
+
         try:
             rc = 0
             # Insert code here

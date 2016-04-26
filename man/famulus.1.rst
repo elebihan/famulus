@@ -23,8 +23,9 @@ DESCRIPTION
 OPTIONS
 =======
 
--V, --version   display program version and exit
--D, --debug     show debug messages
+-V, --version             display program version and exit
+-C FILE, --config FILE    set path to configuration file
+-D, --debug               show debug messages
 
 ENVIRONMENT VARIABLES
 =====================
