@@ -37,6 +37,7 @@ from famulus.utils import setup_i18n
 from famulus.log import setup_logging, set_level
 from famulus.log import error, warning
 from famulus.config import Configuration
+from famulus.testmanager import TestManager
 from gettext import gettext as _
 
 DEFAULT_CONF_FILE = '~/.config/famulus.conf'
@@ -49,6 +50,9 @@ setup_logging()
 class Application:
     """Command line Application"""
     def __init__(self):
+        self._test_mgr = TestManager()
+        self._config = Configuration()
+
         self._parser = argparse.ArgumentParser()
         self._parser.add_argument('-V', '--version',
                                   action='version',
@@ -62,7 +66,33 @@ class Application:
                                   default=os.path.expanduser(DEFAULT_CONF_FILE),
                                   help=_('set path to configuration file'))
 
-        self._config = Configuration()
+        subparsers = self._parser.add_subparsers(dest='command')
+        p = subparsers.add_parser('list',
+                                  help=_('list available tests or test suites'))
+        p.add_argument('-d', '--details',
+                       action='store_true',
+                       dest='with_details',
+                       default=False,
+                       help=_("show some details"))
+        p.add_argument('object',
+                       choices=('tests', 'suites'),
+                       help=_('objects to list'))
+        p.set_defaults(func=self._parse_cmd_list)
+
+    def _parse_cmd_list(self, args):
+        if args.object == 'tests':
+            items = self._test_mgr.tests
+        elif args.object == 'suites':
+            items = self._test_mgr.suites
+        else:
+            self._parser.error(_('Invalid object'))
+
+        for item in items:
+            if args.with_details:
+                text = "{0.name:<32} -- {0.brief:<48}"
+            else:
+                text = "{0.name}"
+            print(text.format(item))
 
     def run(self):
         """Run the application"""
@@ -76,21 +106,27 @@ class Application:
         else:
             warning(_("Can not find configuration file. Using defaults."))
 
+        for path in self._config.tests_paths:
+            self._test_mgr.add_search_path(path)
+
+        if not hasattr(args, 'func'):
+            self._parser.error(_('Missing command'))
+
         try:
+            self._test_mgr.scan()
+            args.func(args)
             rc = 0
-            # Insert code here
         except Exception as e:
+            rc = 1
             if 'FAMULUS_SHOW_STACK_TRACES' in os.environ:
                 traceback.print_exc()
             else:
                 error(_("Command failed ({})").format(e))
-            rc = 1
-        return rc
+        self._parser.exit(rc)
 
 
 def main():
     app = Application()
-    rc = app.run()
-    sys.exit(rc)
+    app.run()
 
 # vim: ts=4 sw=4 sts=4 et ai
