@@ -47,7 +47,7 @@ class Application:
     """Command line Application"""
     def __init__(self):
         self._parser = argparse.ArgumentParser()
-        self._parser.add_argument('-v', '--version',
+        self._parser.add_argument('-V', '--version',
                                   action='version',
                                   version=__version__)
         self._parser.add_argument('-D', '--debug',

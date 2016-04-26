@@ -23,7 +23,7 @@ DESCRIPTION
 OPTIONS
 =======
 
--v, --version   display program version and exit
+-V, --version   display program version and exit
 -D, --debug     show debug messages
 
 ENVIRONMENT VARIABLES
