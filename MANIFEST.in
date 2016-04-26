@@ -1,0 +1,8 @@
+include AUTHORS
+include COPYING
+include CHANGELOG.rst
+include HACKING.rst
+include README.rst
+include disthelpers.py
+recursive-include man *
+recursive-include po *.po
