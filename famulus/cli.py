@@ -98,6 +98,9 @@ class Application:
         """Run the application"""
         args = self._parser.parse_args()
 
+        if not hasattr(args, 'func'):
+            self._parser.error(_('Missing command'))
+
         if args.debug:
             set_level('DEBUG')
 
@@ -108,9 +111,6 @@ class Application:
 
         for path in self._config.tests_paths:
             self._test_mgr.add_search_path(path)
-
-        if not hasattr(args, 'func'):
-            self._parser.error(_('Missing command'))
 
         try:
             self._test_mgr.scan()
