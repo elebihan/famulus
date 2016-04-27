@@ -67,33 +67,34 @@ class TestManager:
             for entry in os.listdir(path):
                 fn = os.path.join(path, entry)
                 if fn.endswith('.yaml'):
-                    debug(_("Found test '{}'").format(fn))
                     self.load_file(fn)
 
     @property
     def tests(self):
         """List of tests"""
-        return self._tests
+        return [t for (t, f) in self._tests]
 
     @property
     def suites(self):
         """List of test suites"""
-        return self._suites
+        return [s for (s, f) in self._suites]
 
     def load_file(self, filename):
         """Load test or test suite from file"""
         with open(filename) as f:
             doc = yaml.load(f.read())
             if 'type' not in doc:
-                raise ValueError(_("Invalid test file"))
+                raise ValueError(_("Invalid test/suite file"))
             if doc['type'] == 'test':
                 test = Test(doc)
-                self._tests.append(test)
+                self._tests.append((test, filename))
+                debug(_("Loaded test from '{}'").format(filename))
             elif doc['type'] == 'suite':
                 suite = Suite(doc)
-                self._suites.append(suite)
+                self._suites.append((suite, filename))
+                debug(_("Loaded suite from '{}'").format(filename))
             else:
-                raise ValueError(_("Invalid category in test file"))
+                raise ValueError(_("Invalid category in test/suite file"))
 
     def find_test(self, name):
         """Find a test by its name.
@@ -104,10 +105,9 @@ class TestManager:
         @return: the test
         @rtype: Test
         """
-        for test in self._tests:
+        for (test, fn) in self._tests:
             if test.name == name:
                 return test
-        return None
 
     def find_suite(self, name):
         """Find a test suite by its name.
@@ -118,10 +118,9 @@ class TestManager:
         @return: the test suite
         @rtype: Suite
         """
-        for suite in self._suites:
+        for (suite, fn) in self._suites:
             if suite.name == name:
                 return suite
-        return None
 
     def create_test(self, name, path, template=None):
         """Create a new test.
