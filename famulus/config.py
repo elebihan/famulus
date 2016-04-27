@@ -31,13 +31,13 @@
 import os
 from configparser import ConfigParser
 
-DEFAULT_TESTS_PATH = '~/.local/share/famulus/tests'
+DEFAULT_TESTS_PATH = os.path.expanduser('~/.local/share/famulus/tests')
 
 
 class Configuration:
     """Stores the configuration of the application"""
     def __init__(self):
-        self.tests_paths = [os.path.expanduser(DEFAULT_TESTS_PATH)]
+        self.tests_paths = [DEFAULT_TESTS_PATH]
 
     def load_from_file(self, filename):
         """Loads the configuration from a file
