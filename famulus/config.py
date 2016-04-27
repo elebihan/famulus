@@ -51,9 +51,10 @@ class Configuration:
             parser.read_file(f)
         value = parser.get('General', 'Editor', fallback=None)
         self.editor = value or self.editor
-        value = parser.get('General', 'TestsPaths', fallback='')
-        self.tests_paths += map(lambda p: os.path.expanduser(p.strip()),
-                                value.split(','))
+        value = parser.get('General', 'TestsPaths', fallback=None)
+        if value:
+            self.tests_paths += map(lambda p: os.path.expanduser(p.strip()),
+                                    value.split(','))
 
     def save_to_file(self, filename):
         """Saves the configuration to a file
