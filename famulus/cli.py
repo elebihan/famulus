@@ -87,8 +87,8 @@ class Application:
                        help=_('set output directory'))
         p.add_argument('-f', '--from',
                        dest='template',
-                       metavar=_('FILE'),
-                       help=_('use FILE as template'))
+                       metavar=_('NAME'),
+                       help=_('use NAME as template'))
         p.add_argument('object',
                        choices=('test', 'suite'),
                        help=_('object to create'))
