@@ -38,6 +38,10 @@ from .utils import get_data_dir
 from subprocess import check_call
 from gettext import gettext as _
 
+from enum import Enum
+
+TestType = Enum('TestType', 'simple suite')
+
 
 class TestManager:
     """Manage test and test suite files"""
@@ -128,7 +132,10 @@ class TestManager:
         @param path: str
         """
         if not self.find_test(name):
-            filename = self._create_test_file(name, path, template)
+            filename = self._create_file_for(TestType.simple,
+                                             name,
+                                             path,
+                                             template)
             self.load_file(filename)
         else:
             raise ValueError(_("A test with this name already exists"))
@@ -142,19 +149,21 @@ class TestManager:
         @param path: str
         """
         if not self.find_suite(name):
-            filename = self._create_suite_file(name, path, template)
+            filename = self._create_file_for(TestType.suite,
+                                             name,
+                                             path,
+                                             template)
             self.load_file(filename)
         else:
             raise ValueError(_("A test suite with this name already exists"))
 
-    def _create_test_file(self, name, path, template):
+    def _create_file_for(self, what, name, path, template):
+        samples = {
+            TestType.simple: 'test.yaml',
+            TestType.suite: 'suite.yaml',
+        }
         if not template:
-            template = os.path.join(get_data_dir(), 'samples', 'test.yaml')
-        return self._create_file(name, path, template)
-
-    def _create_suite_file(self, name, path, template):
-        if not template:
-            template = os.path.join(get_data_dir(), 'samples', 'suite.yaml')
+            template = os.path.join(get_data_dir(), 'samples', samples[what])
         return self._create_file(name, path, template)
 
     def _create_file(self, name, path, template):
