@@ -17,6 +17,8 @@ famulus [OPTIONS] <command> [<argument>,...]
 
 famulus list [OPTIONS] {suites|tests}
 
+famulus new [OPTIONS] {suite|test} <name>
+
 DESCRIPTION
 ===========
 
@@ -38,6 +40,19 @@ list [OPTIONS] {suites|tests}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 List the available tests or test suites.
+
+new [OPTIONS] {suite|test} <name>
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Create a new test or test suite.
+
+The default text editor set by the user via the *$EDITOR* environment variable
+or from the configuration file will be summoned to edit the new file.
+
+Available options:
+
+-f NAME, --from=NAME    use NAME as template
+-O DIR, --output=DIR    set output directory
 
 ENVIRONMENT VARIABLES
 =====================
