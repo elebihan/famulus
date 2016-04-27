@@ -46,6 +46,7 @@ setup(name='famulus',
       packages=find_packages(),
       data_files=[
           ('share/famulus/samples', glob('data/samples/*.yaml')),
+          ('share/zsh/site-functions', glob('shell-completion/zsh/_*')),
       ],
       include_package_data=True,
       entry_points={
