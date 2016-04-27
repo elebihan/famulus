@@ -36,7 +36,7 @@ from famulus import __version__
 from famulus.utils import setup_i18n
 from famulus.log import setup_logging, set_level
 from famulus.log import error, warning
-from famulus.config import Configuration
+from famulus.config import Configuration, DEFAULT_TESTS_PATH
 from famulus.testmanager import TestManager
 from gettext import gettext as _
 
@@ -79,6 +79,23 @@ class Application:
                        help=_('objects to list'))
         p.set_defaults(func=self._parse_cmd_list)
 
+        p = subparsers.add_parser('new',
+                                  help=_('create a new test or test suite'))
+        p.add_argument('-O', '--output',
+                       metavar=_('DIR'),
+                       default=DEFAULT_TESTS_PATH,
+                       help=_('set output directory'))
+        p.add_argument('-f', '--from',
+                       dest='template',
+                       metavar=_('FILE'),
+                       help=_('use FILE as template'))
+        p.add_argument('object',
+                       choices=('test', 'suite'),
+                       help=_('object to create'))
+        p.add_argument('name',
+                       help=_('name of the new object'))
+        p.set_defaults(func=self._parse_cmd_new)
+
     def _parse_cmd_list(self, args):
         if args.object == 'tests':
             items = self._test_mgr.tests
@@ -93,6 +110,14 @@ class Application:
             else:
                 text = "{0.name}"
             print(text.format(item))
+
+    def _parse_cmd_new(self, args):
+        if args.object == 'test':
+            self._test_mgr.create_test(args.name, args.output, args.template)
+        elif args.object == 'suite':
+            self._test_mgr.create_suite(args.name, args.output, args.template)
+        else:
+            self._parser.error(_('Invalid object'))
 
     def run(self):
         """Run the application"""
@@ -111,6 +136,8 @@ class Application:
 
         for path in self._config.tests_paths:
             self._test_mgr.add_search_path(path)
+
+        self._test_mgr.editor = self._config.editor
 
         try:
             self._test_mgr.scan()
