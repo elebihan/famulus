@@ -27,12 +27,12 @@ import famulus
 
 setup(name='famulus',
       version=famulus.__version__,
-      description='Insert description here',
+      description='Servile test runner',
       long_description='''
-      Here a longer description here
+      Famulus is a tool to run non-regression tests on a remote device.
       ''',
       license='GPLv3',
-      url='https://some.url/',
+      url='https://github.com/elebihan/famulus/',
       platforms=['Any'],
       keywords=[],
       install_requires=[
@@ -40,7 +40,7 @@ setup(name='famulus',
           'pyaml>=15.8'
       ],
       classifiers=[
-          'Development Status :: 3 - Alpha',
+          'Development Status :: 1 - Pre-Alpha',
           'Programming Language :: Python :: 3',
       ],
       packages=find_packages(),
