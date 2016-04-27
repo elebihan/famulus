@@ -49,11 +49,11 @@ class Configuration:
         parser = ConfigParser()
         with open(filename) as f:
             parser.read_file(f)
+        value = parser.get('General', 'Editor', fallback=None)
+        self.editor = value or self.editor
         value = parser.get('General', 'TestsPaths', fallback='')
         self.tests_paths += map(lambda p: os.path.expanduser(p.strip()),
                                 value.split(','))
-        value = parser.get('General', 'Editor', fallback=None)
-        self.editor = value or self.editor
 
     def save_to_file(self, filename):
         """Saves the configuration to a file
@@ -62,6 +62,7 @@ class Configuration:
         @type filename: str
         """
         parser = ConfigParser()
+        parser.set('General', 'Editor', self.editor)
         parser.set('General', 'TestsPaths', ','.join(self.tests_paths))
         with open(filename, 'w+') as f:
             parser.write(f)
