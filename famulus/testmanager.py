@@ -161,9 +161,13 @@ class TestManager:
             TestType.simple: 'test.yaml',
             TestType.suite: 'suite.yaml',
         }
-        if not template:
-            template = os.path.join(get_data_dir(), 'samples', samples[what])
-        return self._create_file(name, path, template)
+        if template:
+            fn = self._find_file_for(what, template)
+            if not fn:
+                raise ValueError(_('Invalid template name'))
+        else:
+            fn = os.path.join(get_data_dir(), 'samples', samples[what])
+        return self._create_file(name, path, fn)
 
     def _create_file(self, name, path, template):
         filename = os.path.join(path, name + '.yaml')
@@ -172,5 +176,14 @@ class TestManager:
         check_call([self.editor, filename])
         return filename
 
+    def _find_file_for(self, what, name):
+        items = {
+            TestType.simple: self._tests,
+            TestType.suite: self._suites,
+        }
+
+        for (item, fn) in items[what]:
+            if item.name == name:
+                return fn
 
 # vim: ts=4 sw=4 sts=4 et ai
