@@ -13,7 +13,9 @@ servile test runner
 SYNOPSIS
 ========
 
-famulus [OPTIONS]
+famulus [OPTIONS] <command> [<argument>,...]
+
+famulus list [OPTIONS] {suites|tests}
 
 DESCRIPTION
 ===========
@@ -26,6 +28,16 @@ OPTIONS
 -V, --version             display program version and exit
 -C FILE, --config FILE    set path to configuration file
 -D, --debug               show debug messages
+
+COMMANDS
+========
+
+The following commands are available:
+
+list [OPTIONS] {suites|tests}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+List the available tests or test suites.
 
 ENVIRONMENT VARIABLES
 =====================
