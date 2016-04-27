@@ -1,0 +1,29 @@
+---
+# The name of the test suite
+name: test-sample
+# The type ("test", of course)
+type: test
+# The category
+category: system
+# The author of the test
+author: Stewie Griffin
+# A brief description of the suite, as a single line string
+brief: very useful sample test
+# A more lengthy description of the suite, as a multi-line string
+description: >
+  This test is very important because it I say so.
+
+  Maybe some other tests could be derived from it.
+
+# Commands to run before the test
+setup:
+  - send(/some/file)  # Send a file (only available over SSH connection
+  - echo Hello!       # Executed on the target
+  - host(echo Hello!) # Executed on the host
+# Commands to run after the test
+teardown:
+  - echo Goodbye!
+# Command to run for the test
+command: uname -r
+# Expected result (may be a regular expression)
+expect: ^3.4$

@@ -6,3 +6,4 @@ include README.rst
 include disthelpers.py
 recursive-include man *
 recursive-include po *.po
+recursive-include data/samples *

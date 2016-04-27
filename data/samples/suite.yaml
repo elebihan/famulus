@@ -1,0 +1,21 @@
+---
+# The name of the test suite
+name: suite-sample
+# The type ("suite", of course)
+type: suite
+# The category
+category: system
+# The author of the test suite
+author: Peter Griffin
+# A brief description of the suite, as a single line string
+brief: super sample test suite
+# A more lengthy description of the suite, as a multi-line string
+description: >
+  This test suite is the best test suite ever!
+
+  No kidding.
+
+# List of the tests to execute
+tests:
+  - foobar
+  - baz
