@@ -31,8 +31,11 @@
 
 import os
 import yaml
+import shutil
 from .log import debug
 from .test import Test, Suite
+from .utils import get_data_dir
+from subprocess import check_call
 from gettext import gettext as _
 
 
@@ -42,6 +45,7 @@ class TestManager:
         self._search_paths = []
         self._tests = []
         self._suites = []
+        self.editor = os.environ.get('EDITOR', 'vi')
 
     def add_search_path(self, path):
         """Adds a new path for searching test definitions.
@@ -86,5 +90,79 @@ class TestManager:
                 self._suites.append(suite)
             else:
                 raise ValueError(_("Invalid category in test file"))
+
+    def find_test(self, name):
+        """Find a test by its name.
+
+        @param name: name of the test to find.
+        @type name: str
+
+        @return: the test
+        @rtype: Test
+        """
+        for test in self._tests:
+            if test.name == name:
+                return test
+        return None
+
+    def find_suite(self, name):
+        """Find a test suite by its name.
+
+        @param name: name of the test suite to find.
+        @type name: str
+
+        @return: the test suite
+        @rtype: Suite
+        """
+        for suite in self._suites:
+            if suite.name == name:
+                return suite
+        return None
+
+    def create_test(self, name, path, template=None):
+        """Create a new test.
+
+        @param name: name of the new test
+        @type name: str
+        @param path: location to store the test file
+        @param path: str
+        """
+        if not self.find_test(name):
+            filename = self._create_test_file(name, path, template)
+            self.load_file(filename)
+        else:
+            raise ValueError(_("A test with this name already exists"))
+
+    def create_suite(self, name, path, template=None):
+        """Create a new test suite.
+
+        @param name: name of the new test suite
+        @type name: str
+        @param path: location to store the test suite file
+        @param path: str
+        """
+        if not self.find_suite(name):
+            filename = self._create_suite_file(name, path, template)
+            self.load_file(filename)
+        else:
+            raise ValueError(_("A test suite with this name already exists"))
+
+    def _create_test_file(self, name, path, template):
+        if not template:
+            template = os.path.join(get_data_dir(), 'samples', 'test.yaml')
+        return self._create_file(name, path, template)
+
+    def _create_suite_file(self, name, path, template):
+        if not template:
+            template = os.path.join(get_data_dir(), 'samples', 'suite.yaml')
+        return self._create_file(name, path, template)
+
+    def _create_file(self, name, path, template):
+        filename = os.path.join(path, name + '.yaml')
+        debug(_("Creating {} from {}".format(filename, template)))
+        shutil.copy(template, filename)
+        check_call([self.editor, filename])
+        return filename
+
 
 # vim: ts=4 sw=4 sts=4 et ai
