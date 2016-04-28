@@ -40,6 +40,15 @@ from gettext import gettext as _
 
 from enum import Enum
 
+TEST_INFO_TEMPLATE = """{1}
+--
+Author: {0.author}"""
+
+SUITE_INFO_TEMPLATE = """{1}
+--
+Tests: {2}
+Author: {0.author}"""
+
 TestType = Enum('TestType', 'simple suite')
 
 
@@ -190,5 +199,40 @@ class TestManager:
         for (item, fn) in items[what]:
             if item.name == name:
                 return fn
+
+    def describe_test(self, name):
+        """Describe a test.
+
+        @param name: name of the test to describe
+        @type name: str
+
+        @return: description of the test
+        @rtype: str
+        """
+
+        test = self.find_test(name)
+        if test:
+            text = ''.join(test.description).strip()
+            return TEST_INFO_TEMPLATE.format(test, text)
+        else:
+            raise ValueError(_("Invalid test name"))
+
+    def describe_suite(self, name):
+        """Describe a test suite.
+
+        @param name: name of the test suite to describe
+        @type name: str
+
+        @return: description of the test suite
+        @rtype: str
+        """
+
+        suite = self.find_suite(name)
+        if suite:
+            text = ''.join(suite.description).strip()
+            tests = ', '.join(suite.tests)
+            return SUITE_INFO_TEMPLATE.format(suite, text, tests)
+        else:
+            raise ValueError(_("Invalid test suite name"))
 
 # vim: ts=4 sw=4 sts=4 et ai
