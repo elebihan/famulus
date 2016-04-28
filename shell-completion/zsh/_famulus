@@ -62,10 +62,36 @@ _famulus_list_all_suites()
     fi
 }
 
+(( $+functions[_famulus_edit] )) || _famulus_edit()
+{
+    _arguments -w -S -s \
+               '1:what:(suite test)' \
+               '2: :->name'
+
+    if [[ "$state" == name ]]; then
+        local names
+        case "$words[2]" in
+            suite)
+                _famulus_list_all_suites
+                names=_famulus_all_suites
+                ;;
+            test)
+                _famulus_list_all_tests
+                names=_famulus_all_tests
+                ;;
+            *)
+                _message "invalid object: $words[2]"
+                ;;
+        esac
+        compadd -a ${names}
+    fi
+}
+
 (( $+functions[_famulus_command] )) || _famulus_command()
 {
     local -a _famulus_cmds
     _famulus_cmds=(
+        "edit:edit a test or test suite"
         "list:list available tests or test suites"
         "new:create a new test or test suite"
         "show:show information about a test or test suite"
