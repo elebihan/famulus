@@ -1,13 +1,18 @@
 #compdef famulus
 
+__famulus()
+{
+    FAMULUS_LOG=ERROR famulus "$@"
+}
+
 _famulus_list_all_tests()
 {
-    _famulus_all_tests=( $(famulus list tests | { while read a; do echo -E - " $a"; done; }) )
+    _famulus_all_tests=( $(__famulus list tests | { while read a; do echo -E - " $a"; done; }) )
 }
 
 _famulus_list_all_suites()
 {
-    _famulus_all_suites=( $(famulus list suites | { while read a; do echo -E - " $a"; done; }) )
+    _famulus_all_suites=( $(__famulus list suites | { while read a; do echo -E - " $a"; done; }) )
 }
 
 (( $+functions[_famulus_list] )) || _famulus_list()
