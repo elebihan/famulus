@@ -96,6 +96,15 @@ class Application:
                        help=_('name of the new object'))
         p.set_defaults(func=self._parse_cmd_new)
 
+        p = subparsers.add_parser('show',
+                                  help=_('show information about a test or test suite'))
+        p.add_argument('object',
+                       choices=('test', 'suite'),
+                       help=_('object to show'))
+        p.add_argument('name',
+                       help=_('name of the object'))
+        p.set_defaults(func=self._parse_cmd_show)
+
     def _parse_cmd_list(self, args):
         if args.object == 'tests':
             items = self._test_mgr.tests
@@ -118,6 +127,15 @@ class Application:
             self._test_mgr.create_suite(args.name, args.output, args.template)
         else:
             self._parser.error(_('Invalid object'))
+
+    def _parse_cmd_show(self, args):
+        if args.object == 'test':
+            text = self._test_mgr.describe_test(args.name)
+        elif args.object == 'suite':
+            text = self._test_mgr.describe_suite(args.name)
+        else:
+            self._parser.error(_('Invalid object'))
+        print(text)
 
     def run(self):
         """Run the application"""
