@@ -235,4 +235,29 @@ class TestManager:
         else:
             raise ValueError(_("Invalid test suite name"))
 
+    def edit_test(self, name):
+        """Edit a test.
+
+        @param name: name of the test to edit
+        @type name: str
+        """
+        fn = self._find_file_for(TestType.simple, name)
+        if fn:
+            check_call([self.editor, fn])
+        else:
+            raise ValueError(_("Invalid test name"))
+
+    def edit_suite(self, name):
+        """Edit a test suite.
+
+        @param name: name of the test suite to edit
+        @type name: str
+        """
+        fn = self._find_file_for(TestType.suite, name)
+        if fn:
+            check_call([self.editor, fn])
+        else:
+            raise ValueError(_("Invalid test suite name"))
+
+
 # vim: ts=4 sw=4 sts=4 et ai
