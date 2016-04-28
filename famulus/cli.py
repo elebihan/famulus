@@ -105,6 +105,15 @@ class Application:
                        help=_('name of the object'))
         p.set_defaults(func=self._parse_cmd_show)
 
+        p = subparsers.add_parser('edit',
+                                  help=_('edit a test or test suite'))
+        p.add_argument('object',
+                       choices=('test', 'suite'),
+                       help=_('object to edit'))
+        p.add_argument('name',
+                       help=_('name of the object'))
+        p.set_defaults(func=self._parse_cmd_edit)
+
     def _parse_cmd_list(self, args):
         if args.object == 'tests':
             items = self._test_mgr.tests
@@ -136,6 +145,14 @@ class Application:
         else:
             self._parser.error(_('Invalid object'))
         print(text)
+
+    def _parse_cmd_edit(self, args):
+        if args.object == 'test':
+            text = self._test_mgr.edit_test(args.name)
+        elif args.object == 'suite':
+            text = self._test_mgr.edit_suite(args.name)
+        else:
+            self._parser.error(_('Invalid object'))
 
     def run(self):
         """Run the application"""
