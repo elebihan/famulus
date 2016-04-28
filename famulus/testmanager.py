@@ -32,7 +32,7 @@
 import os
 import yaml
 import shutil
-from .log import debug
+from .log import debug, warning
 from .test import Test, Suite
 from .utils import get_data_dir
 from subprocess import check_call
@@ -67,7 +67,10 @@ class TestManager:
             for entry in os.listdir(path):
                 fn = os.path.join(path, entry)
                 if fn.endswith('.yaml'):
-                    self.load_file(fn)
+                    try:
+                        self.load_file(fn)
+                    except ValueError as e:
+                        warning(_("Skipping {} ({})".format(fn, e)))
 
     @property
     def tests(self):
@@ -83,6 +86,8 @@ class TestManager:
         """Load test or test suite from file"""
         with open(filename) as f:
             doc = yaml.load(f.read())
+            if not doc:
+                raise ValueError(_("Invalid YAML file"))
             if 'type' not in doc:
                 raise ValueError(_("Invalid test/suite file"))
             if doc['type'] == 'test':
