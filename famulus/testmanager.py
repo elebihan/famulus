@@ -33,7 +33,7 @@ import os
 import yaml
 import shutil
 from .log import debug, warning
-from .test import Test, Suite
+from .test import TestSpec, SuiteSpec
 from .utils import get_data_dir
 from subprocess import check_call
 from gettext import gettext as _
@@ -91,11 +91,11 @@ class TestManager:
             if 'type' not in doc:
                 raise ValueError(_("Invalid test/suite file"))
             if doc['type'] == 'test':
-                test = Test(doc)
+                test = TestSpec(doc)
                 self._tests.append((test, filename))
                 debug(_("Loaded test from '{}'").format(filename))
             elif doc['type'] == 'suite':
-                suite = Suite(doc)
+                suite = SuiteSpec(doc)
                 self._suites.append((suite, filename))
                 debug(_("Loaded suite from '{}'").format(filename))
             else:

@@ -31,34 +31,45 @@
 
 from gettext import gettext as _
 
-COMMON_KEYS = ['name', 'type', 'category', 'author', 'brief', 'description']
-TEST_KEYS = COMMON_KEYS + ['setup', 'teardown', 'command', 'expect']
-SUITE_KEYS = COMMON_KEYS + ['tests']
+BASE_KEYS = ['name', 'type', 'category', 'author', 'brief', 'description']
+TEST_KEYS = ['setup', 'teardown', 'command', 'expect']
+SUITE_KEYS =['tests']
 
 
-class Test:
-    """Represent a test to be run.
+class BaseSpec:
+    """Base class for a specification.
+
+    @param params: dictionary of params for creating test.
+    @type params: dict
+
+    @param extra_keys: list of extra parameter keys
+    @type extra_keys: list of str
+    """
+    def __init__(self, params, extra_keys=[]):
+        if not params.keys() & set(BASE_KEYS + extra_keys):
+            raise ValueError(_("Invalid keys in dictionary"))
+        for key in params.keys():
+            if key != 'type':
+                setattr(self, key, params[key])
+
+
+class TestSpec(BaseSpec):
+    """Specification of a test case to run.
 
     @param params: dictionary of params for creating test.
     @type params: dict
     """
     def __init__(self, params):
-        if not params.keys() & set(TEST_KEYS):
-            raise ValueError(_("Invalid keys in dictionary"))
-        self.name = params['name']
-        self.brief = params['brief']
+        BaseSpec.__init__(self, params, TEST_KEYS)
 
 
-class Suite:
-    """Represent a test suite to be run.
+class SuiteSpec(BaseSpec):
+    """Specification a test suite to run.
 
-    @param params: dictionary of params for creating test.
+    @param params: dictionary of params for creating test suite.
     @type params: dict
     """
     def __init__(self, params):
-        if not params.keys() & set(SUITE_KEYS):
-            raise ValueError(_("Invalid keys in dictionary"))
-        self.name = params['name']
-        self.brief = params['brief']
+        BaseSpec.__init__(self, params, SUITE_KEYS)
 
 # vim: ts=4 sw=4 sts=4 et ai
