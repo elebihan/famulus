@@ -55,8 +55,8 @@ class TestManager:
     """Manage test and suite specifications"""
     def __init__(self):
         self._search_paths = []
-        self._tests = []
-        self._suites = []
+        self._tests = {}
+        self._suites = {}
         self.editor = os.environ.get('EDITOR', 'vi')
 
     def add_search_path(self, path):
@@ -82,12 +82,12 @@ class TestManager:
     @property
     def tests(self):
         """List of test specifications"""
-        return [t for (t, f) in self._tests]
+        return self._tests.values()
 
     @property
     def suites(self):
         """List of suite specifications"""
-        return [s for (s, f) in self._suites]
+        return self._suites.values()
 
     def load_spec_file(self, filename):
         """Load a test/suite specification from a file"""
@@ -104,14 +104,14 @@ class TestManager:
                     debug(_("Skipping test from {} (already in list)".format(filename)))
                 else:
                     test = TestSpec(doc)
-                    self._tests.append((test, filename))
+                    self._tests[filename] = test
                     debug(_("Loaded test from '{}'").format(filename))
             elif doc['type'] == 'suite':
                 if doc['name'] in s_names:
                     debug(_("Skipping suite from {} (already in list)".format(filename)))
                 else:
                     suite = SuiteSpec(doc)
-                    self._suites.append((suite, filename))
+                    self._suites[filename] = suite
                     debug(_("Loaded suite from '{}'").format(filename))
             else:
                 raise ValueError(_("Invalid category in test/suite file"))
@@ -125,7 +125,7 @@ class TestManager:
         @return: the test specification
         @rtype: TestSpec
         """
-        for (test, fn) in self._tests:
+        for test in self.tests:
             if test.name == name:
                 return test
 
@@ -138,7 +138,7 @@ class TestManager:
         @return: the test suite specification
         @rtype: SuiteSpec
         """
-        for (suite, fn) in self._suites:
+        for suite in self.suites:
             if suite.name == name:
                 return suite
 
@@ -197,13 +197,13 @@ class TestManager:
         return filename
 
     def _find_spec_file(self, kind, name):
-        items = {
+        collections = {
             TestType.single: self._tests,
             TestType.suite: self._suites,
         }
 
-        for (item, fn) in items[kind]:
-            if item.name == name:
+        for (fn, element) in collections[kind].items():
+            if element.name == name:
                 return fn
 
     def describe_test(self, name):
