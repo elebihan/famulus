@@ -124,7 +124,7 @@ class Application:
 
         for item in items:
             if args.with_details:
-                text = "{0.name:<32} -- {0.brief:<48}"
+                text = "{0.name:<24} -- {0.brief:<48}"
             else:
                 text = "{0.name}"
             print(text.format(item))
