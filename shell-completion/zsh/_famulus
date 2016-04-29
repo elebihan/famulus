@@ -31,9 +31,19 @@ _famulus_list_all_suites()
         '2: :_guard "^-*" name'
 
     if [[ "$state" == object ]]; then
-        _famulus_list_all_tests
-        _famulus_list_all_suites
-        compadd -a _famulus_all_tests _famulus_all_suites
+        local names
+        if [[ ${words[(i)test]} -le ${#words} ]]; then
+            _famulus_list_all_tests
+            names=_famulus_all_tests
+        elif [[ ${words[(i)suite]} -le ${#words} ]]; then
+            _famulus_list_all_suites
+            names=_famulus_all_suites
+        else
+            _famulus_list_all_tests
+            _famulus_list_all_suites
+            names=( _famulus_all_tests _famulus_all_suites )
+        fi
+        compadd -a ${names}
     fi
 }
 
