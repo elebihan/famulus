@@ -48,7 +48,7 @@ SUITE_INFO_TEMPLATE = """{1}
 Tests: {2}
 Author: {0.author}"""
 
-TestType = Enum('TestType', 'simple suite')
+TestType = Enum('TestType', 'single suite')
 
 
 class TestManager:
@@ -151,7 +151,7 @@ class TestManager:
         @param path: str
         """
         if not self.find_test(name):
-            filename = self._create_file_for(TestType.simple,
+            filename = self._create_file_for(TestType.single,
                                              name,
                                              path,
                                              template)
@@ -178,7 +178,7 @@ class TestManager:
 
     def _create_file_for(self, what, name, path, template):
         samples = {
-            TestType.simple: 'test.yaml',
+            TestType.single: 'test.yaml',
             TestType.suite: 'suite.yaml',
         }
         if template:
@@ -198,7 +198,7 @@ class TestManager:
 
     def _find_file_for(self, what, name):
         items = {
-            TestType.simple: self._tests,
+            TestType.single: self._tests,
             TestType.suite: self._suites,
         }
 
@@ -247,7 +247,7 @@ class TestManager:
         @param name: name of the test to edit
         @type name: str
         """
-        fn = self._find_file_for(TestType.simple, name)
+        fn = self._find_file_for(TestType.single, name)
         if fn:
             check_call([self.editor, fn])
         else:
