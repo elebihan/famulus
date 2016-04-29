@@ -19,3 +19,8 @@ description: >
 tests:
   - foobar
   - baz
+
+# List of the suites to execute
+suites:
+  - quux
+  - glop
