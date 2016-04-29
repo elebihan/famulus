@@ -22,8 +22,7 @@
    famulus.testmanager
    ```````````````````
 
-   Classes and helper functions to manage test and test suite files.
-
+   Classes and helper functions to manage test and suite files.
 
    :copyright: (C) 2016 Eric Le Bihan <eric.le.bihan.dev@free.fr>
    :license: GPLv3+
@@ -53,7 +52,7 @@ TestType = Enum('TestType', 'simple suite')
 
 
 class TestManager:
-    """Manage test and test suite files"""
+    """Manage test and suite specifications"""
     def __init__(self):
         self._search_paths = []
         self._tests = []
@@ -61,15 +60,15 @@ class TestManager:
         self.editor = os.environ.get('EDITOR', 'vi')
 
     def add_search_path(self, path):
-        """Adds a new path for searching test definitions.
+        """Adds a new path for searching test/suite specifications.
 
-        @param path: path where to look for new tests
+        @param path: path where to look for new tests/suites
         @type path: str
         """
         self._search_paths.append(path)
 
     def scan(self):
-        """Scan all known search paths for tests"""
+        """Scan all known search paths for tests/suites"""
         for path in reversed(self._search_paths):
             debug(_("Searching for tests in {}").format(path))
             for entry in os.listdir(path):
@@ -87,11 +86,11 @@ class TestManager:
 
     @property
     def suites(self):
-        """List of test suites"""
+        """List of suites"""
         return [s for (s, f) in self._suites]
 
     def load_file(self, filename):
-        """Load test or test suite from file"""
+        """Load a test or a suite from a file"""
         t_names = [t.name for t in self.tests]
         s_names = [s.name for s in self.suites]
         with open(filename) as f:
@@ -123,21 +122,21 @@ class TestManager:
         @param name: name of the test to find.
         @type name: str
 
-        @return: the test
-        @rtype: Test
+        @return: the test specification
+        @rtype: TestSpec
         """
         for (test, fn) in self._tests:
             if test.name == name:
                 return test
 
     def find_suite(self, name):
-        """Find a test suite by its name.
+        """Find a suite by its name.
 
-        @param name: name of the test suite to find.
+        @param name: name of the suite to find.
         @type name: str
 
-        @return: the test suite
-        @rtype: Suite
+        @return: the test suite specification
+        @rtype: SuiteSpec
         """
         for (suite, fn) in self._suites:
             if suite.name == name:
@@ -161,11 +160,11 @@ class TestManager:
             raise ValueError(_("A test with this name already exists"))
 
     def create_suite(self, name, path, template=None):
-        """Create a new test suite.
+        """Create a new suite.
 
-        @param name: name of the new test suite
+        @param name: name of the new suite
         @type name: str
-        @param path: location to store the test suite file
+        @param path: location to store the suite file
         @param path: str
         """
         if not self.find_suite(name):
@@ -175,7 +174,7 @@ class TestManager:
                                              template)
             self.load_file(filename)
         else:
-            raise ValueError(_("A test suite with this name already exists"))
+            raise ValueError(_("A suite with this name already exists"))
 
     def _create_file_for(self, what, name, path, template):
         samples = {
@@ -225,12 +224,12 @@ class TestManager:
             raise ValueError(_("Invalid test name"))
 
     def describe_suite(self, name):
-        """Describe a test suite.
+        """Describe a suite.
 
-        @param name: name of the test suite to describe
+        @param name: name of the suite to describe
         @type name: str
 
-        @return: description of the test suite
+        @return: description of the suite
         @rtype: str
         """
 
@@ -240,10 +239,10 @@ class TestManager:
             tests = ', '.join(suite.tests)
             return SUITE_INFO_TEMPLATE.format(suite, text, tests)
         else:
-            raise ValueError(_("Invalid test suite name"))
+            raise ValueError(_("Invalid suite name"))
 
     def edit_test(self, name):
-        """Edit a test.
+        """Edit a test specification.
 
         @param name: name of the test to edit
         @type name: str
@@ -255,16 +254,16 @@ class TestManager:
             raise ValueError(_("Invalid test name"))
 
     def edit_suite(self, name):
-        """Edit a test suite.
+        """Edit a suite specification.
 
-        @param name: name of the test suite to edit
+        @param name: name of the suite to edit
         @type name: str
         """
         fn = self._find_file_for(TestType.suite, name)
         if fn:
             check_call([self.editor, fn])
         else:
-            raise ValueError(_("Invalid test suite name"))
+            raise ValueError(_("Invalid suite name"))
 
 
 # vim: ts=4 sw=4 sts=4 et ai

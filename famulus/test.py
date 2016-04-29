@@ -22,8 +22,7 @@
    famulus.test
    ````````````
 
-   Classes and helper functions for tests and test suites.
-
+   Classes and helper functions for tests and suites.
 
    :copyright: (C) 2016 Eric Le Bihan <eric.le.bihan.dev@free.fr>
    :license: GPLv3+
@@ -39,7 +38,7 @@ SUITE_KEYS =['tests']
 class BaseSpec:
     """Base class for a specification.
 
-    @param params: dictionary of params for creating test.
+    @param params: dictionary of params for creating specification.
     @type params: dict
 
     @param extra_keys: list of extra parameter keys
@@ -54,7 +53,7 @@ class BaseSpec:
 
 
 class TestSpec(BaseSpec):
-    """Specification of a test case to run.
+    """Specification of a test to run.
 
     @param params: dictionary of params for creating test.
     @type params: dict
@@ -64,9 +63,9 @@ class TestSpec(BaseSpec):
 
 
 class SuiteSpec(BaseSpec):
-    """Specification a test suite to run.
+    """Specification of a suite to run.
 
-    @param params: dictionary of params for creating test suite.
+    @param params: dictionary of params for creating suite.
     @type params: dict
     """
     def __init__(self, params):

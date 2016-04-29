@@ -68,7 +68,7 @@ class Application:
 
         subparsers = self._parser.add_subparsers(dest='command')
         p = subparsers.add_parser('list',
-                                  help=_('list available tests or test suites'))
+                                  help=_('list available tests or suites'))
         p.add_argument('-d', '--details',
                        action='store_true',
                        dest='with_details',
@@ -80,7 +80,7 @@ class Application:
         p.set_defaults(func=self._parse_cmd_list)
 
         p = subparsers.add_parser('new',
-                                  help=_('create a new test or test suite'))
+                                  help=_('create a new test or suite'))
         p.add_argument('-O', '--output',
                        metavar=_('DIR'),
                        default=DEFAULT_TESTS_PATH,
@@ -97,7 +97,7 @@ class Application:
         p.set_defaults(func=self._parse_cmd_new)
 
         p = subparsers.add_parser('show',
-                                  help=_('show information about a test or test suite'))
+                                  help=_('show information about a test or suite'))
         p.add_argument('object',
                        choices=('test', 'suite'),
                        help=_('object to show'))
@@ -106,7 +106,7 @@ class Application:
         p.set_defaults(func=self._parse_cmd_show)
 
         p = subparsers.add_parser('edit',
-                                  help=_('edit a test or test suite'))
+                                  help=_('edit a test or suite'))
         p.add_argument('object',
                        choices=('test', 'suite'),
                        help=_('object to edit'))
