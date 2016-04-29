@@ -70,8 +70,7 @@ class TestManager:
 
     def scan(self):
         """Scan all known search paths for tests"""
-        self._presets = []
-        for path in self._search_paths:
+        for path in reversed(self._search_paths):
             debug(_("Searching for tests in {}").format(path))
             for entry in os.listdir(path):
                 fn = os.path.join(path, entry)
@@ -93,6 +92,8 @@ class TestManager:
 
     def load_file(self, filename):
         """Load test or test suite from file"""
+        t_names = [t.name for t in self.tests]
+        s_names = [s.name for s in self.suites]
         with open(filename) as f:
             doc = yaml.load(f.read())
             if not doc:
@@ -100,13 +101,19 @@ class TestManager:
             if 'type' not in doc:
                 raise ValueError(_("Invalid test/suite file"))
             if doc['type'] == 'test':
-                test = TestSpec(doc)
-                self._tests.append((test, filename))
-                debug(_("Loaded test from '{}'").format(filename))
+                if doc['name'] in t_names:
+                    debug(_("Skipping test from {} (already in list)".format(filename)))
+                else:
+                    test = TestSpec(doc)
+                    self._tests.append((test, filename))
+                    debug(_("Loaded test from '{}'").format(filename))
             elif doc['type'] == 'suite':
-                suite = SuiteSpec(doc)
-                self._suites.append((suite, filename))
-                debug(_("Loaded suite from '{}'").format(filename))
+                if doc['name'] in s_names:
+                    debug(_("Skipping suite from {} (already in list)".format(filename)))
+                else:
+                    suite = SuiteSpec(doc)
+                    self._suites.append((suite, filename))
+                    debug(_("Loaded suite from '{}'").format(filename))
             else:
                 raise ValueError(_("Invalid category in test/suite file"))
 
