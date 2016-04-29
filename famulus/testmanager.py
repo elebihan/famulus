@@ -70,27 +70,27 @@ class TestManager:
     def scan(self):
         """Scan all known search paths for tests/suites"""
         for path in reversed(self._search_paths):
-            debug(_("Searching for tests in {}").format(path))
+            debug(_("Searching for tests/suites in {}").format(path))
             for entry in os.listdir(path):
                 fn = os.path.join(path, entry)
                 if fn.endswith('.yaml'):
                     try:
-                        self.load_file(fn)
+                        self.load_spec_file(fn)
                     except ValueError as e:
                         warning(_("Skipping {} ({})".format(fn, e)))
 
     @property
     def tests(self):
-        """List of tests"""
+        """List of test specifications"""
         return [t for (t, f) in self._tests]
 
     @property
     def suites(self):
-        """List of suites"""
+        """List of suite specifications"""
         return [s for (s, f) in self._suites]
 
-    def load_file(self, filename):
-        """Load a test or a suite from a file"""
+    def load_spec_file(self, filename):
+        """Load a test/suite specification from a file"""
         t_names = [t.name for t in self.tests]
         s_names = [s.name for s in self.suites]
         with open(filename) as f:
@@ -116,8 +116,8 @@ class TestManager:
             else:
                 raise ValueError(_("Invalid category in test/suite file"))
 
-    def find_test(self, name):
-        """Find a test by its name.
+    def find_test_spec(self, name):
+        """Find a test specification by its name.
 
         @param name: name of the test to find.
         @type name: str
@@ -129,8 +129,8 @@ class TestManager:
             if test.name == name:
                 return test
 
-    def find_suite(self, name):
-        """Find a suite by its name.
+    def find_suite_spec(self, name):
+        """Find a suite specification by its name.
 
         @param name: name of the suite to find.
         @type name: str
@@ -142,51 +142,51 @@ class TestManager:
             if suite.name == name:
                 return suite
 
-    def create_test(self, name, path, template=None):
-        """Create a new test.
+    def create_test_spec(self, name, path, template=None):
+        """Create a new test specification.
 
         @param name: name of the new test
         @type name: str
         @param path: location to store the test file
         @param path: str
         """
-        if not self.find_test(name):
-            filename = self._create_file_for(TestType.single,
-                                             name,
-                                             path,
-                                             template)
-            self.load_file(filename)
+        if not self.find_test_spec(name):
+            filename = self._create_spec_file(TestType.single,
+                                              name,
+                                              path,
+                                              template)
+            self.load_spec_file(filename)
         else:
             raise ValueError(_("A test with this name already exists"))
 
-    def create_suite(self, name, path, template=None):
-        """Create a new suite.
+    def create_suite_spec(self, name, path, template=None):
+        """Create a new suite specification.
 
         @param name: name of the new suite
         @type name: str
         @param path: location to store the suite file
         @param path: str
         """
-        if not self.find_suite(name):
-            filename = self._create_file_for(TestType.suite,
-                                             name,
-                                             path,
-                                             template)
-            self.load_file(filename)
+        if not self.find_suite_spec(name):
+            filename = self._create_spec_file(TestType.suite,
+                                              name,
+                                              path,
+                                              template)
+            self.load_spec_file(filename)
         else:
             raise ValueError(_("A suite with this name already exists"))
 
-    def _create_file_for(self, what, name, path, template):
+    def _create_spec_file(self, kind, name, path, template):
         samples = {
             TestType.single: 'test.yaml',
             TestType.suite: 'suite.yaml',
         }
         if template:
-            fn = self._find_file_for(what, template)
+            fn = self._find_spec_file(kind, template)
             if not fn:
                 raise ValueError(_('Invalid template name'))
         else:
-            fn = os.path.join(get_data_dir(), 'samples', samples[what])
+            fn = os.path.join(get_data_dir(), 'samples', samples[kind])
         return self._create_file(name, path, fn)
 
     def _create_file(self, name, path, template):
@@ -196,13 +196,13 @@ class TestManager:
         check_call([self.editor, filename])
         return filename
 
-    def _find_file_for(self, what, name):
+    def _find_spec_file(self, kind, name):
         items = {
             TestType.single: self._tests,
             TestType.suite: self._suites,
         }
 
-        for (item, fn) in items[what]:
+        for (item, fn) in items[kind]:
             if item.name == name:
                 return fn
 
@@ -216,7 +216,7 @@ class TestManager:
         @rtype: str
         """
 
-        test = self.find_test(name)
+        test = self.find_test_spec(name)
         if test:
             text = ''.join(test.description).strip()
             return TEST_INFO_TEMPLATE.format(test, text)
@@ -233,7 +233,7 @@ class TestManager:
         @rtype: str
         """
 
-        suite = self.find_suite(name)
+        suite = self.find_suite_spec(name)
         if suite:
             text = ''.join(suite.description).strip()
             tests = ', '.join(suite.tests)
@@ -241,29 +241,28 @@ class TestManager:
         else:
             raise ValueError(_("Invalid suite name"))
 
-    def edit_test(self, name):
+    def edit_test_spec(self, name):
         """Edit a test specification.
 
         @param name: name of the test to edit
         @type name: str
         """
-        fn = self._find_file_for(TestType.single, name)
+        fn = self._find_spec_file(TestType.single, name)
         if fn:
             check_call([self.editor, fn])
         else:
             raise ValueError(_("Invalid test name"))
 
-    def edit_suite(self, name):
+    def edit_suite_spec(self, name):
         """Edit a suite specification.
 
         @param name: name of the suite to edit
         @type name: str
         """
-        fn = self._find_file_for(TestType.suite, name)
+        fn = self._find_spec_file(TestType.suite, name)
         if fn:
             check_call([self.editor, fn])
         else:
             raise ValueError(_("Invalid suite name"))
-
 
 # vim: ts=4 sw=4 sts=4 et ai

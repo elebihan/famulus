@@ -131,9 +131,13 @@ class Application:
 
     def _parse_cmd_new(self, args):
         if args.object == 'test':
-            self._test_mgr.create_test(args.name, args.output, args.template)
+            self._test_mgr.create_test_spec(args.name,
+                                            args.output,
+                                            args.template)
         elif args.object == 'suite':
-            self._test_mgr.create_suite(args.name, args.output, args.template)
+            self._test_mgr.create_suite_spec(args.name,
+                                             args.output,
+                                             args.template)
         else:
             self._parser.error(_('Invalid object'))
 
@@ -148,9 +152,9 @@ class Application:
 
     def _parse_cmd_edit(self, args):
         if args.object == 'test':
-            text = self._test_mgr.edit_test(args.name)
+            text = self._test_mgr.edit_test_spec(args.name)
         elif args.object == 'suite':
-            text = self._test_mgr.edit_suite(args.name)
+            text = self._test_mgr.edit_suite_spec(args.name)
         else:
             self._parser.error(_('Invalid object'))
 
