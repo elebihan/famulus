@@ -157,7 +157,7 @@ class TestManager:
                                               template)
             self.load_spec_file(filename)
         else:
-            raise ValueError(_("A test with this name already exists"))
+            raise ValueError(_("Test already exists"))
 
     def create_suite_spec(self, name, path, template=None):
         """Create a new suite specification.
@@ -174,7 +174,7 @@ class TestManager:
                                               template)
             self.load_spec_file(filename)
         else:
-            raise ValueError(_("A suite with this name already exists"))
+            raise ValueError(_("Suite already exists"))
 
     def _create_spec_file(self, kind, name, path, template):
         samples = {
