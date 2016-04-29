@@ -32,12 +32,10 @@ import os
 import yaml
 import shutil
 from .log import debug, warning
-from .test import TestSpec, SuiteSpec
+from .test import TestType, TestSpec, SuiteSpec
 from .utils import get_data_dir
 from subprocess import check_call
 from gettext import gettext as _
-
-from enum import Enum
 
 TEST_INFO_TEMPLATE = """{1}
 --
@@ -47,8 +45,6 @@ SUITE_INFO_TEMPLATE = """{1}
 --
 Tests: {2}
 Author: {0.author}"""
-
-TestType = Enum('TestType', 'single suite')
 
 
 class TestManager:

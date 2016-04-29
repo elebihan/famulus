@@ -28,11 +28,14 @@
    :license: GPLv3+
 """
 
+from enum import Enum
 from gettext import gettext as _
 
 BASE_KEYS = ['name', 'type', 'category', 'author', 'brief', 'description']
 TEST_KEYS = ['setup', 'teardown', 'command', 'expect']
 SUITE_KEYS =['tests']
+
+TestType = Enum('TestType', 'single suite')
 
 
 class BaseSpec:
