@@ -152,9 +152,9 @@ class Application:
 
     def _parse_cmd_edit(self, args):
         if args.object == 'test':
-            text = self._test_mgr.edit_test_spec(args.name)
+            self._test_mgr.edit_test_spec(args.name)
         elif args.object == 'suite':
-            text = self._test_mgr.edit_suite_spec(args.name)
+            self._test_mgr.edit_suite_spec(args.name)
         else:
             self._parser.error(_('Invalid object'))
 
