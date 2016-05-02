@@ -29,7 +29,6 @@
 """
 
 import os
-import sys
 import argparse
 import traceback
 from famulus import __version__
@@ -37,6 +36,7 @@ from famulus.utils import setup_i18n
 from famulus.log import setup_logging, set_level
 from famulus.log import error, warning
 from famulus.config import Configuration, DEFAULT_TESTS_PATH
+from famulus.test import SpecType
 from famulus.testmanager import TestManager
 from gettext import gettext as _
 
@@ -144,33 +144,27 @@ class Application:
             print(text.format(item))
 
     def _parse_cmd_new(self, args):
-        if args.object == 'test':
-            self._test_mgr.create_test_spec(args.name,
-                                            args.output,
-                                            args.template)
-        elif args.object == 'suite':
-            self._test_mgr.create_suite_spec(args.name,
-                                             args.output,
-                                             args.template)
-        else:
+        try:
+            self._test_mgr.create_spec(SpecType[args.object],
+                                       args.name,
+                                       args.output,
+                                       args.template)
+        except KeyError:
             self._parser.error(_('Invalid object'))
 
     def _parse_cmd_show(self, args):
-        if args.object == 'test':
-            text = self._test_mgr.describe_test(args.name)
-        elif args.object == 'suite':
-            text = self._test_mgr.describe_suite(args.name)
-        else:
+        try:
+            text = self._test_mgr.describe(SpecType[args.object], args.name)
+            print(text)
+        except KeyError:
             self._parser.error(_('Invalid object'))
-        print(text)
 
     def _parse_cmd_edit(self, args):
-        if args.object == 'test':
-            self._test_mgr.edit_test_spec(args.name)
-        elif args.object == 'suite':
-            self._test_mgr.edit_suite_spec(args.name)
-        else:
+        try:
+            self._test_mgr.edit_spec(SpecType[args.object], args.name)
+        except KeyError:
             self._parser.error(_('Invalid object'))
+
 
     def _parse_cmd_run(self, args):
         self._test_mgr.create_suite_for_names(args.names)
