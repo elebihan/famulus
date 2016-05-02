@@ -65,6 +65,12 @@ class Application:
                                   metavar=_('FILE'),
                                   default=os.path.expanduser(DEFAULT_CONF_FILE),
                                   help=_('set path to configuration file'))
+        self._parser.add_argument('-T', '--tests-path',
+                                  metavar=_('DIR'),
+                                  dest='tests_paths',
+                                  action='append',
+                                  default=[],
+                                  help=_('add path to tests/suites'))
 
         subparsers = self._parser.add_subparsers(dest='command')
         p = subparsers.add_parser('list',
@@ -174,6 +180,9 @@ class Application:
             warning(_("Can not find configuration file. Using defaults."))
 
         for path in self._config.tests_paths:
+            self._test_mgr.add_search_path(path)
+
+        for path in args.tests_paths:
             self._test_mgr.add_search_path(path)
 
         self._test_mgr.editor = self._config.editor
