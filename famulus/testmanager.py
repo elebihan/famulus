@@ -277,9 +277,9 @@ class TestManager:
 
         for name in names:
             if name in t_names:
-                self._add_test_from_name(root, name)
+                self._add_test_to_suite(root, name)
             elif name in s_names:
-                self._add_suite_from_name(root, name)
+                self._add_suite_to_suite(root, name)
 
     def _create_test_from_spec(self, spec):
         debug(_("Creating test {}".format(spec.name)))
@@ -296,12 +296,12 @@ class TestManager:
         suite.brief = spec.brief
         suite.description = spec.description
         for n in spec.tests:
-            self._add_test_from_name(suite, n)
+            self._add_test_to_suite(suite, n)
         for n in spec.suites:
-            self._add_suite_from_name(suite, n)
+            self._add_suite_to_suite(suite, n)
         return suite
 
-    def _add_test_from_name(self, suite, name):
+    def _add_test_to_suite(self, suite, name):
         spec = self.find_test_spec(name)
         if spec:
             t = self._create_test_from_spec(spec)
@@ -310,7 +310,7 @@ class TestManager:
         else:
             raise ValueError(_("Invalid test name"))
 
-    def _add_suite_from_name(self, suite, name):
+    def _add_suite_to_suite(self, suite, name):
         spec = self.find_suite_spec(name)
         if spec:
             s = self._create_suite_from_spec(spec)
