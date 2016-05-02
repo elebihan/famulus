@@ -120,6 +120,14 @@ class Application:
                        help=_('name of the object'))
         p.set_defaults(func=self._parse_cmd_edit)
 
+        p = subparsers.add_parser('run',
+                                  help=_('run one or more test/suite'))
+        p.add_argument('names',
+                       nargs='+',
+                       metavar=_('NAME'),
+                       help=_('name of the object'))
+        p.set_defaults(func=self._parse_cmd_run)
+
     def _parse_cmd_list(self, args):
         if args.object == 'tests':
             items = self._test_mgr.tests
@@ -163,6 +171,9 @@ class Application:
             self._test_mgr.edit_suite_spec(args.name)
         else:
             self._parser.error(_('Invalid object'))
+
+    def _parse_cmd_run(self, args):
+        self._test_mgr.create_suite_for_names(args.names)
 
     def run(self):
         """Run the application"""
