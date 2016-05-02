@@ -1,0 +1,18 @@
+---
+name: test-valid
+type: test
+category: system
+author: Stewie Griffin
+brief: valid test
+description: >
+  This test specification is valid.
+
+  No errors in it.
+
+setup:
+  - echo Hello!
+  - host(echo Hello!)
+teardown:
+  - echo Goodbye!
+command: uname -r
+expect: ^3.4$

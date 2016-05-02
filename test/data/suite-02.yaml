@@ -1,0 +1,14 @@
+---
+name: suite-02
+type: suite
+category: system
+author: Stewie Griffin
+brief: Check subsystem 02
+description: >
+  This suite specification is valid.
+
+  No errors in it
+
+tests:
+  - test-02
+  - test-01

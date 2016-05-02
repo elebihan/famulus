@@ -1,0 +1,13 @@
+---
+name: suite-invalid-circular-dep
+type: suite
+category: system
+author: Stewie Griffin
+brief: Check if invalid suite will be detected
+description: >
+  This suite specification is invalid.
+
+  It contains a circular dependency.
+
+suites:
+  - suite-invalid-circular-dep
