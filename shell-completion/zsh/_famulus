@@ -125,8 +125,10 @@ _famulus_list_all_suites()
 }
 
 _arguments -w -S -s \
-    '(-V --version)'{-v,--version}'' \
-    '(-D --debug)'{-d,--debug}'' \
+    '(-V --version)'{-v,--version}'[show program version number and exit]' \
+    '(-C --config)'{-C,--config}'[set path configuration file]:file:_files' \
+    '(-D --debug)'{-d,--debug}'[show debug messages]' \
+    '(-T --tests-path)'{-T,--tests-path}'[add path to tests/suites]:directory:_directories' \
     '*::famulus command:_famulus_command'
 
 # vim: ts=4 sts=4 sw=4 et ai
