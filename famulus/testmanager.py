@@ -32,7 +32,7 @@ import os
 import yaml
 import shutil
 from .log import debug, warning
-from .test import TestType, TestSpec, SuiteSpec
+from .test import TestType, TestSpec, SuiteSpec, Test, Suite
 from .utils import get_data_dir
 from subprocess import check_call
 from gettext import gettext as _
@@ -258,6 +258,64 @@ class TestManager:
         fn = self._find_spec_file(TestType.suite, name)
         if fn:
             check_call([self.editor, fn])
+        else:
+            raise ValueError(_("Invalid suite name"))
+
+    def create_suite_for_names(self, names):
+        """Create a suite from a list of test/suite names.
+
+        @param names: list of test/suite names
+        @type names: list of str
+
+        @return: a suite
+        @rtype: Suite
+        """
+        s_names = [s.name for s in self.suites]
+        t_names = [t.name for t in self.tests]
+
+        root = Suite("root")
+
+        for name in names:
+            if name in t_names:
+                self._add_test_from_name(root, name)
+            elif name in s_names:
+                self._add_suite_from_name(root, name)
+
+    def _create_test_from_spec(self, spec):
+        debug(_("Creating test {}".format(spec.name)))
+        test = Test(spec.name, spec.command, spec.expect)
+        test.author = spec.author
+        test.brief = spec.brief
+        test.description = spec.description
+        return test
+
+    def _create_suite_from_spec(self, spec):
+        debug(_("Creating suite {}".format(spec.name)))
+        suite = Suite(spec.name)
+        suite.author = spec.author
+        suite.brief = spec.brief
+        suite.description = spec.description
+        for n in spec.tests:
+            self._add_test_from_name(suite, n)
+        for n in spec.suites:
+            self._add_suite_from_name(suite, n)
+        return suite
+
+    def _add_test_from_name(self, suite, name):
+        spec = self.find_test_spec(name)
+        if spec:
+            t = self._create_test_from_spec(spec)
+            suite.add_test(t)
+            debug(_("Added test {}".format(t.name)))
+        else:
+            raise ValueError(_("Invalid test name"))
+
+    def _add_suite_from_name(self, suite, name):
+        spec = self.find_suite_spec(name)
+        if spec:
+            s = self._create_suite_from_spec(spec)
+            suite.add_suite(s)
+            debug(_("Added suite {}".format(s.name)))
         else:
             raise ValueError(_("Invalid suite name"))
 
