@@ -32,7 +32,8 @@ from enum import Enum
 from .log import debug
 from gettext import gettext as _
 
-TestType = Enum('TestType', 'single suite')
+
+SpecType = Enum('SpecType', 'test suite')
 
 
 class BaseSpec:
