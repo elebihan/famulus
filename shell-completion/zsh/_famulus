@@ -97,6 +97,18 @@ _famulus_list_all_suites()
     fi
 }
 
+(( $+functions[_famulus_run] )) || _famulus_run()
+{
+    _arguments -w -S -s \
+               '1: :->name'
+
+    if [[ "$state" == name ]]; then
+        _famulus_list_all_suites
+        _famulus_list_all_tests
+        compadd -a _famulus_all_tests _famulus_all_suites
+    fi
+}
+
 (( $+functions[_famulus_command] )) || _famulus_command()
 {
     local -a _famulus_cmds
@@ -104,6 +116,7 @@ _famulus_list_all_suites()
         "edit:edit a test or test suite"
         "list:list available tests or test suites"
         "new:create a new test or test suite"
+        "run:run one or more test or test suite"
         "show:show information about a test or test suite"
     )
     if (( CURRENT == 1 )); then
