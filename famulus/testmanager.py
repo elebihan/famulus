@@ -33,7 +33,7 @@ import yaml
 import shutil
 from .log import debug, warning
 from .test import TestType, TestSpec, SuiteSpec, Test, Suite
-from .utils import get_data_dir
+from .utils import get_data_dir, topological_sort, CyclicGraphError
 from subprocess import check_call
 from gettext import gettext as _
 
@@ -45,6 +45,10 @@ SUITE_INFO_TEMPLATE = """{1}
 --
 Tests: {2}
 Author: {0.author}"""
+
+
+class CyclicDependencyError(Exception):
+    """Error raised when a cyclic dependency error between suites is found"""
 
 
 class TestManager:
@@ -273,6 +277,8 @@ class TestManager:
         s_names = [s.name for s in self.suites]
         t_names = [t.name for t in self.tests]
 
+        self._check_circular_deps(names, s_names)
+
         root = Suite("root")
 
         for name in names:
@@ -280,6 +286,28 @@ class TestManager:
                 self._add_test_to_suite(root, name)
             elif name in s_names:
                 self._add_suite_to_suite(root, name)
+
+    def _check_circular_deps(self, names, suite_names):
+        debug(_("Checking for circular dependencies between suites"))
+        selection = [n for n in names if n in suite_names]
+        graph_unsorted = {'root': selection}
+        try:
+            self._build_suite_deps(graph_unsorted, selection, suite_names)
+        except CyclicGraphError:
+            raise CyclicDependencyError
+
+    def _build_suite_deps(self, graph_unsorted, names, suite_names):
+        selection = [n for n in names if n in suite_names]
+        for name in selection:
+            spec = self.find_suite_spec(name)
+            if spec:
+                graph_unsorted[name] = spec.suites
+                deps = ', '.join(spec.suites)
+                debug(_("Suite {} depends on {}").format(name, deps))
+                topological_sort(dict(graph_unsorted))
+                self._build_suite_deps(graph_unsorted,
+                                       spec.suites,
+                                       suite_names)
 
     def _create_test_from_spec(self, spec):
         debug(_("Creating test {}".format(spec.name)))
