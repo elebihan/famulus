@@ -32,10 +32,6 @@ from enum import Enum
 from .log import debug
 from gettext import gettext as _
 
-BASE_KEYS = ['name', 'type', 'category', 'author', 'brief', 'description']
-TEST_KEYS = ['setup', 'teardown', 'command', 'expect']
-SUITE_KEYS =['tests']
-
 TestType = Enum('TestType', 'single suite')
 
 
@@ -44,16 +40,13 @@ class BaseSpec:
 
     @param params: dictionary of params for creating specification.
     @type params: dict
-
-    @param extra_keys: list of extra parameter keys
-    @type extra_keys: list of str
     """
-    def __init__(self, params, extra_keys=[]):
-        if not params.keys() & set(BASE_KEYS + extra_keys):
-            raise ValueError(_("Invalid keys in dictionary"))
-        for key in params.keys():
-            if key != 'type':
-                setattr(self, key, params[key])
+    def __init__(self, params):
+        self.name = params['name']
+        self.brief = params['brief']
+        self.category = params.get('catgeory', 'Unknown')
+        self.author = params.get('author', 'Unknown')
+        self.description = params.get('description', 'No description given')
 
 
 class TestSpec(BaseSpec):
@@ -63,7 +56,11 @@ class TestSpec(BaseSpec):
     @type params: dict
     """
     def __init__(self, params):
-        BaseSpec.__init__(self, params, TEST_KEYS)
+        BaseSpec.__init__(self, params)
+        self.command = params['command']
+        self.expect = params['expect']
+        self.setup = params.get('setup', [])
+        self.teardown = params.get('teardown', [])
 
 
 class SuiteSpec(BaseSpec):
@@ -73,7 +70,9 @@ class SuiteSpec(BaseSpec):
     @type params: dict
     """
     def __init__(self, params):
-        BaseSpec.__init__(self, params, SUITE_KEYS)
+        BaseSpec.__init__(self, params)
+        self.tests = params.get('tests', [])
+        self.suites = params.get('suites', [])
 
 
 class BaseTest:
