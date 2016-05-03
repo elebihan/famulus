@@ -102,14 +102,14 @@ class TestManager:
                 else:
                     test = TestSpec(doc)
                     self._tests[filename] = test
-                    debug(_("Loaded test from '{}'").format(filename))
+                    debug(_("Loaded test from {}").format(filename))
             elif doc['type'] == 'suite':
                 if doc['name'] in s_names:
                     debug(_("Skipping suite from {} (already in list)".format(filename)))
                 else:
                     suite = SuiteSpec(doc)
                     self._suites[filename] = suite
-                    debug(_("Loaded suite from '{}'").format(filename))
+                    debug(_("Loaded suite from {}").format(filename))
             else:
                 raise ValueError(_("Invalid category in test/suite file"))
 
