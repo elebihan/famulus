@@ -30,6 +30,7 @@
 
 from enum import Enum
 from .log import debug
+from enum import Enum
 from gettext import gettext as _
 
 
@@ -118,6 +119,7 @@ class Test(BaseTest):
     def run(self):
         """Run the test"""
         debug(_("Running test {}").format(self.name))
+        return TestResult()
 
 
 class Suite(BaseTest):
@@ -158,10 +160,56 @@ class Suite(BaseTest):
     def run(self):
         """Run all the tests, then all the suites"""
         debug(_("Running suite {}").format(self.name))
+        res = SuiteResult()
         for test in self._tests:
-            test.run()
+            t_res = test.run()
+            res.test_results.append(t_res)
         for suite in self._suites:
-            suite.run()
+            s_res = suite.run()
+            res.suite_results.append(s_res)
+        return res
 
+
+TestStatus = Enum('TestStatus', 'passed failed')
+
+
+class TestResult:
+    """Represent the result of the execution of a test"""
+    def __init__(self, status=TestStatus.failed):
+        self.status = status
+
+
+class SuiteResult:
+    """Represent the result of the execution of a suite"""
+    def __init__(self):
+        self.test_results = []
+        self.suite_results = []
+
+    @property
+    def status(self):
+        status = TestStatus.passed
+        for res in self.test_results:
+            if res.status != TestStatus.passed:
+                status = TestStatus.failed
+                break
+        for res in self.suite_results:
+            if res.status != TestStatus.passed:
+                status = TestStatus.failed
+                break
+        return status
+
+    @property
+    def is_failure(self):
+        """Tell whether the suite failed or not"""
+        if self.status == TestStatus.passed:
+            return False
+        return True
+
+    @property
+    def is_success(self):
+        """Tell whether the suite succeeded or not"""
+        if self.status == TestStatus.failed:
+            return False
+        return True
 
 # vim: ts=4 sw=4 sts=4 et ai
