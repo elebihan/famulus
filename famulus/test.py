@@ -29,6 +29,7 @@
 """
 
 from .log import debug
+from .event import TestEvent, DummyEventHandler
 from enum import Enum
 from gettext import gettext as _
 
@@ -44,6 +45,7 @@ class BaseTest:
         self.author = _('Unknown')
         self.brief = _('No brief description available')
         self.description = _('No description available')
+        self.event_handler = DummyEventHandler()
 
     @property
     def name(self):
@@ -51,6 +53,9 @@ class BaseTest:
 
     def run(self):
         raise NotImplementedError
+
+    def _notify_event(self, event):
+        self.event_handler.handle(event, self.name)
 
 
 class Test(BaseTest):
@@ -75,7 +80,10 @@ class Test(BaseTest):
     def run(self):
         """Run the test"""
         debug(_("Running test {}").format(self.name))
-        return TestResult()
+        self._notify_event(TestEvent.begin)
+        result = TestResult()
+        self._notify_event(TestEvent.end)
+        return result
 
 
 class Suite(BaseTest):
@@ -116,6 +124,7 @@ class Suite(BaseTest):
     def run(self):
         """Run all the tests, then all the suites"""
         debug(_("Running suite {}").format(self.name))
+        self._notify_event(TestEvent.begin)
         res = SuiteResult()
         for test in self._tests:
             t_res = test.run()
@@ -123,6 +132,7 @@ class Suite(BaseTest):
         for suite in self._suites:
             s_res = suite.run()
             res.suite_results.append(s_res)
+        self._notify_event(TestEvent.end)
         return res
 
 
