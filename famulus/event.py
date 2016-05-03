@@ -30,7 +30,9 @@
 """
 
 import abc
+from datetime import datetime
 from enum import Enum
+from gettext import gettext as _
 
 
 TestEvent = Enum('TestEvent', 'begin end')
@@ -50,5 +52,21 @@ class DummyEventHandler(BaseEventHandler):
 
     def handle(self, event, name):
         pass
+
+
+class EventLogger(BaseEventHandler):
+    """Log events to standard output"""
+    def __init__(self):
+        pass
+
+    def handle(self, event, name):
+        messages = {
+            TestEvent.begin: _("start of {}").format(name),
+            TestEvent.end: _("end of {}").format(name),
+        }
+        ts = datetime.now().isoformat()
+        text =_("{timestamp}: {message}").format(timestamp=ts,
+                                                 message=messages[event])
+        print(text)
 
 # vim: ts=4 sw=4 sts=4 et ai
