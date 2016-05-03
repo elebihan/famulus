@@ -28,53 +28,9 @@
    :license: GPLv3+
 """
 
-from enum import Enum
 from .log import debug
 from enum import Enum
 from gettext import gettext as _
-
-
-SpecType = Enum('SpecType', 'test suite')
-
-
-class BaseSpec:
-    """Base class for a specification.
-
-    @param params: dictionary of params for creating specification.
-    @type params: dict
-    """
-    def __init__(self, params):
-        self.name = params['name']
-        self.brief = params['brief']
-        self.category = params.get('catgeory', 'Unknown')
-        self.author = params.get('author', 'Unknown')
-        self.description = params.get('description', 'No description given')
-
-
-class TestSpec(BaseSpec):
-    """Specification of a test to run.
-
-    @param params: dictionary of params for creating test.
-    @type params: dict
-    """
-    def __init__(self, params):
-        BaseSpec.__init__(self, params)
-        self.command = params['command']
-        self.expect = params['expect']
-        self.setup = params.get('setup', [])
-        self.teardown = params.get('teardown', [])
-
-
-class SuiteSpec(BaseSpec):
-    """Specification of a suite to run.
-
-    @param params: dictionary of params for creating suite.
-    @type params: dict
-    """
-    def __init__(self, params):
-        BaseSpec.__init__(self, params)
-        self.tests = params.get('tests', [])
-        self.suites = params.get('suites', [])
 
 
 class BaseTest:

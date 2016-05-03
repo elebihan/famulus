@@ -36,7 +36,7 @@ from famulus.utils import setup_i18n
 from famulus.log import setup_logging, set_level
 from famulus.log import error, warning
 from famulus.config import Configuration, DEFAULT_TESTS_PATH
-from famulus.test import SpecType
+from famulus.spec import SpecType
 from famulus.testmanager import TestManager
 from gettext import gettext as _
 

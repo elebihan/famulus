@@ -32,7 +32,7 @@ import os
 import yaml
 import shutil
 from .log import debug, warning
-from .test import SpecType, TestSpec, SuiteSpec
+from .spec import SpecType, TestSpec, SuiteSpec
 from .suitebuilder import SuiteBuilder
 from .utils import get_data_dir
 from subprocess import check_call
