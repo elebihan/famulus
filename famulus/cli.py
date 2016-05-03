@@ -38,6 +38,7 @@ from famulus.log import error, warning
 from famulus.config import Configuration, DEFAULT_TESTS_PATH
 from famulus.spec import SpecType
 from famulus.testmanager import TestManager
+from famulus.testrunner import TestRunner
 from gettext import gettext as _
 
 DEFAULT_CONF_FILE = '~/.config/famulus.conf'
@@ -165,9 +166,16 @@ class Application:
         except KeyError:
             self._parser.error(_('Invalid object'))
 
-
     def _parse_cmd_run(self, args):
-        self._test_mgr.create_suite_for_names(args.names)
+        suite = self._test_mgr.create_suite_for_names(args.names)
+        runner = TestRunner()
+        result = runner.run(suite)
+        if result.is_failure:
+            rc = 6
+            error(_("Some tests/suites failed"))
+        else:
+            rc = 0
+        self._parser.exit(rc)
 
     def run(self):
         """Run the application"""
