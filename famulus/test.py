@@ -55,7 +55,7 @@ class BaseTest:
         raise NotImplementedError
 
     def _notify_event(self, event):
-        self.event_handler.handle(event, self.name)
+        self.event_handler.handle(self, event)
 
 
 class Test(BaseTest):
