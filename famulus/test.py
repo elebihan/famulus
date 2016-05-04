@@ -30,6 +30,7 @@
 
 from .log import debug
 from .event import TestEvent, DummyEventHandler
+from .time import Stopwatch
 from enum import Enum
 from gettext import gettext as _
 
@@ -46,16 +47,30 @@ class BaseTest:
         self.brief = _('No brief description available')
         self.description = _('No description available')
         self.event_handler = DummyEventHandler()
+        self._stopwatch = Stopwatch()
 
     @property
     def name(self):
         return self._name
+
+    @property
+    def stopwatch(self):
+        """Return the stopwatch used"""
+        return self._stopwatch
 
     def run(self):
         raise NotImplementedError
 
     def _notify_event(self, event):
         self.event_handler.handle(self, event)
+
+    def _record_begin(self):
+        self._stopwatch.start()
+        self._notify_event(TestEvent.begin)
+
+    def _record_end(self):
+        self._stopwatch.stop()
+        self._notify_event(TestEvent.end)
 
 
 class Test(BaseTest):
@@ -80,9 +95,9 @@ class Test(BaseTest):
     def run(self):
         """Run the test"""
         debug(_("Running test {}").format(self.name))
-        self._notify_event(TestEvent.begin)
+        self._record_begin()
         result = TestResult(self)
-        self._notify_event(TestEvent.end)
+        self._record_end()
         return result
 
 
@@ -124,7 +139,7 @@ class Suite(BaseTest):
     def run(self):
         """Run all the tests, then all the suites"""
         debug(_("Running suite {}").format(self.name))
-        self._notify_event(TestEvent.begin)
+        self._record_begin()
         res = SuiteResult(self)
         for test in self._tests:
             t_res = test.run()
@@ -132,7 +147,7 @@ class Suite(BaseTest):
         for suite in self._suites:
             s_res = suite.run()
             res.suite_results.append(s_res)
-        self._notify_event(TestEvent.end)
+        self._record_end()
         return res
 
 
