@@ -167,15 +167,11 @@ class SuiteResult:
     @property
     def is_failure(self):
         """Tell whether the suite failed or not"""
-        if self.status == TestStatus.passed:
-            return False
-        return True
+        return self.status == TestStatus.failed
 
     @property
     def is_success(self):
         """Tell whether the suite succeeded or not"""
-        if self.status == TestStatus.failed:
-            return False
-        return True
+        return self.status == TestStatus.success
 
 # vim: ts=4 sw=4 sts=4 et ai
