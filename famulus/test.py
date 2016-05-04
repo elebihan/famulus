@@ -81,7 +81,7 @@ class Test(BaseTest):
         """Run the test"""
         debug(_("Running test {}").format(self.name))
         self._notify_event(TestEvent.begin)
-        result = TestResult()
+        result = TestResult(self)
         self._notify_event(TestEvent.end)
         return result
 
@@ -125,7 +125,7 @@ class Suite(BaseTest):
         """Run all the tests, then all the suites"""
         debug(_("Running suite {}").format(self.name))
         self._notify_event(TestEvent.begin)
-        res = SuiteResult()
+        res = SuiteResult(self)
         for test in self._tests:
             t_res = test.run()
             res.test_results.append(t_res)
@@ -140,16 +140,36 @@ TestStatus = Enum('TestStatus', 'passed failed')
 
 
 class TestResult:
-    """Represent the result of the execution of a test"""
-    def __init__(self, status=TestStatus.failed):
+    """Represent the result of the execution of a test.
+
+    @param test: the test which generated this result
+    @type test: Test
+    """
+    def __init__(self, test, status=TestStatus.failed):
+        self._test = test
         self.status = status
+
+    @property
+    def test(self):
+        """Return the associated test"""
+        return self._test
 
 
 class SuiteResult:
-    """Represent the result of the execution of a suite"""
-    def __init__(self):
+    """Represent the result of the execution of a suite.
+
+    @param suite: the suite which generated this result
+    @type suite: Suite
+    """
+    def __init__(self, suite):
+        self._suite = suite
         self.test_results = []
         self.suite_results = []
+
+    @property
+    def suite(self):
+        """Return the associated suite"""
+        return self._suite
 
     @property
     def status(self):
