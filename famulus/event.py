@@ -69,12 +69,11 @@ class EventLogger(BaseEventHandler):
 
     def handle(self, source, event):
         messages = {
-            TestEvent.begin: _("start of {}").format(source.name),
-            TestEvent.end: _("end of {}").format(source.name),
+            TestEvent.begin: _("start"),
+            TestEvent.end: _("end"),
         }
         ts = datetime.now().isoformat()
-        text =_("{timestamp}: {message}").format(timestamp=ts,
-                                                 message=messages[event])
+        text = "{}: {}: {}".format(ts, source.name, messages[event])
         print(text)
 
 # vim: ts=4 sw=4 sts=4 et ai
