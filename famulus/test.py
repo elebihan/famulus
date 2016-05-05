@@ -169,6 +169,16 @@ class TestResult:
         """Return the associated test"""
         return self._test
 
+    @property
+    def is_failure(self):
+        """Tell whether the test failed or not"""
+        return self.status == TestStatus.failed
+
+    @property
+    def is_success(self):
+        """Tell whether the test succeeded or not"""
+        return self.status == TestStatus.passed
+
 
 class SuiteResult:
     """Represent the result of the execution of a suite.
@@ -207,6 +217,6 @@ class SuiteResult:
     @property
     def is_success(self):
         """Tell whether the suite succeeded or not"""
-        return self.status == TestStatus.success
+        return self.status == TestStatus.passed
 
 # vim: ts=4 sw=4 sts=4 et ai
