@@ -61,8 +61,8 @@ class BaseTest:
     def run(self):
         raise NotImplementedError
 
-    def _notify_event(self, event):
-        self.event_handler.handle(self, event)
+    def _notify_event(self, event, data=None):
+        self.event_handler.handle(self, event, data)
 
     def _record_begin(self):
         self._stopwatch.start()
@@ -97,6 +97,8 @@ class Test(BaseTest):
         debug(_("Running test {}").format(self.name))
         self._record_begin()
         result = TestResult(self)
+        event = TestEvent.success if result.is_success else TestEvent.failure
+        self._notify_event(event)
         self._record_end()
         return result
 
@@ -147,6 +149,8 @@ class Suite(BaseTest):
         for suite in self._suites:
             s_result = suite.run()
             result.suite_results.append(s_result)
+        event = TestEvent.success if result.is_success else TestEvent.failure
+        self._notify_event(event)
         self._record_end()
         return result
 
