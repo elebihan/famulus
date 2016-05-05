@@ -140,15 +140,15 @@ class Suite(BaseTest):
         """Run all the tests, then all the suites"""
         debug(_("Running suite {}").format(self.name))
         self._record_begin()
-        res = SuiteResult(self)
+        result = SuiteResult(self)
         for test in self._tests:
-            t_res = test.run()
-            res.test_results.append(t_res)
+            t_result = test.run()
+            result.test_results.append(t_result)
         for suite in self._suites:
-            s_res = suite.run()
-            res.suite_results.append(s_res)
+            s_result = suite.run()
+            result.suite_results.append(s_result)
         self._record_end()
-        return res
+        return result
 
 
 TestStatus = Enum('TestStatus', 'passed failed')
