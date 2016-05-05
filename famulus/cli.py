@@ -32,7 +32,7 @@ import os
 import argparse
 import traceback
 from famulus import __version__
-from famulus.utils import setup_i18n
+from famulus.utils import setup_i18n, read_from_stdin
 from famulus.log import setup_logging, set_level
 from famulus.log import error, warning
 from famulus.config import Configuration, DEFAULT_TESTS_PATH
@@ -167,7 +167,8 @@ class Application:
             self._parser.error(_('Invalid object'))
 
     def _parse_cmd_run(self, args):
-        suite = self._test_mgr.create_suite_for_names(args.names)
+        names = read_from_stdin() if args.names[0] == '-' else args.names
+        suite = self._test_mgr.create_suite_for_names(names)
         runner = TestRunner()
         result = runner.run(suite)
         if result.is_failure:
