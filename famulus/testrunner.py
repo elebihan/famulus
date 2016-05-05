@@ -29,11 +29,13 @@
    :license: GPLv3+
 """
 
+from .event import EventLogger
+
 
 class TestRunner:
     """Run suites"""
     def __init__(self):
-        pass
+        self.event_handler = EventLogger()
 
     def run(self, suite):
         """Run a suite.
@@ -41,6 +43,17 @@ class TestRunner:
         @param suite: suite to run
         @type suite: Suite
         """
+        propagate_event_handler(suite, self.event_handler)
         return suite.run()
+
+
+def propagate_event_handler(suite, event_handler):
+    """Set the event handler for a suite and its inner tests/suites"""
+    suite.event_handler = event_handler
+    for t in suite.tests:
+        t.event_handler = event_handler
+    for s in suite.suites:
+        propagate_event_handler(s, event_handler)
+
 
 # vim: ts=4 sw=4 sts=4 et ai
