@@ -72,11 +72,20 @@ class EventLogger(BaseEventHandler):
 
     def handle(self, source, event, data=None):
         messages = {
-            TestEvent.begin: _("start"),
-            TestEvent.end: _("end"),
+            TestEvent.begin: (
+                _("start"),
+                source.brief,
+            ),
+            TestEvent.end: (
+                _("end"),
+                None,
+            )
         }
+        msg, extra = messages[event]
         ts = datetime.now().isoformat()
-        text = "{}: {}: {}".format(ts, source.name, messages[event])
+        text = "{}: {}: {}".format(ts, source.name, msg)
+        if extra:
+            text += ": {}".format(extra)
         print(text)
 
 # vim: ts=4 sw=4 sts=4 et ai
