@@ -43,7 +43,7 @@ class BaseEventHandler:
     __metaclass__ = abc.ABCMeta
 
     @abc.abstractmethod
-    def handle(self, source, event):
+    def handle(self, source, event, data=None):
         """Handle an event.
 
         @param source: source of the event
@@ -51,6 +51,9 @@ class BaseEventHandler:
 
         @param event: the event which occured
         @type event: TestEvent
+
+        @param data: additional data
+        @type data: any Python type
         """
         return
 
@@ -58,7 +61,7 @@ class BaseEventHandler:
 class DummyEventHandler(BaseEventHandler):
     """Dummy event handler"""
 
-    def handle(self, source, event):
+    def handle(self, source, event, data=None):
         pass
 
 
@@ -67,7 +70,7 @@ class EventLogger(BaseEventHandler):
     def __init__(self):
         pass
 
-    def handle(self, source, event):
+    def handle(self, source, event, data=None):
         messages = {
             TestEvent.begin: _("start"),
             TestEvent.end: _("end"),
