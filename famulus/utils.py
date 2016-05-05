@@ -29,6 +29,7 @@
 """
 
 import os
+import sys
 from gettext import bindtextdomain, textdomain
 
 
@@ -95,5 +96,14 @@ def topological_sort(graph_unsorted):
             raise CyclicGraphError
 
     return graph_sorted
+
+
+def read_from_stdin():
+    """Read lines from standard input and strip them.
+
+    @return: list of stripped lines
+    @rtype: list of str
+    """
+    return [l.strip() for l in sys.stdin.readlines()]
 
 # vim: ts=4 sw=4 sts=4 et ai
