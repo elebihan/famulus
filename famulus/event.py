@@ -35,7 +35,7 @@ from enum import Enum
 from gettext import gettext as _
 
 
-TestEvent = Enum('TestEvent', 'begin end')
+TestEvent = Enum('TestEvent', 'begin end failure success')
 
 
 class BaseEventHandler:
@@ -79,7 +79,15 @@ class EventLogger(BaseEventHandler):
             TestEvent.end: (
                 _("end"),
                 None,
-            )
+            ),
+            TestEvent.failure: (
+                _("failure"),
+                None,
+            ),
+            TestEvent.success: (
+                _("success"),
+                None,
+            ),
         }
         msg, extra = messages[event]
         ts = datetime.now().isoformat()
