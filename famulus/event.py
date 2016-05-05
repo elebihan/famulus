@@ -30,6 +30,7 @@
 """
 
 import abc
+import sys
 from datetime import datetime
 from enum import Enum
 from gettext import gettext as _
@@ -65,12 +66,61 @@ class DummyEventHandler(BaseEventHandler):
         pass
 
 
-class EventLogger(BaseEventHandler):
-    """Log events to standard output"""
-    def __init__(self):
-        pass
+class HumanEventFormatter:
+    """Format an event for a human"""
 
-    def handle(self, source, event, data=None):
+    def format(self, source, event, data):
+        """Format the event.
+
+        @param source: source of the event
+        @type source: BaseTest
+
+        @param event: the event which occured
+        @type event: TestEvent
+
+        @param data: additional data
+        @type data: any Python type
+
+        @return: event formatted as text
+        @rtype: str
+        """
+        text = ""
+        if type(source).__name__ == 'Suite':
+            if source.name != 'root':
+                if event == TestEvent.success:
+                    text = "{:<48} [PASSED]\n".format(source.brief + "...")
+                elif event == TestEvent.failure:
+                    text = "{:<48} [FAILED]\n".format(source.brief + "...")
+        else:
+            if event == TestEvent.begin:
+                text = "{:<48} ".format(source.brief + "...")
+            elif event == TestEvent.failure:
+                text = "[FAILED]"
+            elif event == TestEvent.success:
+                text = "[PASSED]"
+            elif event == TestEvent.end:
+                text = "\n"
+        return text
+
+
+class MachineEventFormatter:
+    """Format an event for a machine"""
+
+    def format(self, source, event, data):
+        """Format the event.
+
+        @param source: source of the event
+        @type source: BaseTest
+
+        @param event: the event which occured
+        @type event: TestEvent
+
+        @param data: additional data
+        @type data: any Python type
+
+        @return: event formatted as text
+        @rtype: str
+        """
         messages = {
             TestEvent.begin: (
                 _("start"),
@@ -94,6 +144,33 @@ class EventLogger(BaseEventHandler):
         text = "{}: {}: {}".format(ts, source.name, msg)
         if extra:
             text += ": {}".format(extra)
-        print(text)
+        return text + '\n'
+
+
+EventLoggerFormat = Enum('EventLoggerFormat', 'human machine')
+
+
+class EventLogger(BaseEventHandler):
+    """Log events to standard output.
+
+    @param format: format for logging events
+    @type format: EventLoggerFormat
+    """
+    def __init__(self, format=EventLoggerFormat.human):
+        self._format = format
+
+    @property
+    def format(self):
+        """Return the format used for logging events"""
+        return self._format
+
+    def handle(self, source, event, data=None):
+        formatters = {
+            EventLoggerFormat.human: HumanEventFormatter,
+            EventLoggerFormat.machine: MachineEventFormatter,
+        }
+        klass = formatters[self.format]
+        text = klass().format(source, event, data)
+        sys.stdout.write(text)
 
 # vim: ts=4 sw=4 sts=4 et ai
