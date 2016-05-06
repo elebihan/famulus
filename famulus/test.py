@@ -96,10 +96,23 @@ class Test(BaseTest):
         """Run the test"""
         debug(_("Running test {}").format(self.name))
         self._record_begin()
+        self._run_setup()
+        result = self._run_command()
+        self._run_teardown()
+        self._record_end()
+        return result
+
+    def _run_setup(self):
+        self._notify_event(TestEvent.setup)
+
+    def _run_teardown(self):
+        self._notify_event(TestEvent.teardown)
+
+    def _run_command(self):
+        self._notify_event(TestEvent.command)
         result = TestResult(self)
         event = TestEvent.success if result.is_success else TestEvent.failure
         self._notify_event(event)
-        self._record_end()
         return result
 
 
