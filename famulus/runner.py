@@ -41,7 +41,7 @@ class BaseRunner:
     """Abstract base class for running tests or suites"""
     def __init__(self, cmd_runner, evt_handler):
         self._cmd_runner = cmd_runner
-        self.event_handler = evt_handler
+        self._event_handler = evt_handler
         self._stopwatch = Stopwatch()
 
     @property
@@ -53,6 +53,11 @@ class BaseRunner:
     def cmd_runner(self):
         """Return the command runner used"""
         return self._cmd_runner
+
+    @property
+    def event_handler(self):
+        """Return the event handler used"""
+        return self._event_handler
 
     def run(self):
         raise NotImplementedError
@@ -163,8 +168,7 @@ def create_suite_runner(format):
     else:
         ValueError(_("unsupported event logging format"))
 
-    runner = SuiteRunner(CommandRunner())
-    runner.event_handler.format = format
+    runner = SuiteRunner(CommandRunner(), EventLogger(format))
     return runner
 
 
