@@ -38,7 +38,7 @@ from famulus.log import error, warning
 from famulus.config import Configuration, DEFAULT_TESTS_PATH
 from famulus.spec import SpecType
 from famulus.testmanager import TestManager
-from famulus.testrunner import create_test_runner
+from famulus.runner import create_suite_runner
 from gettext import gettext as _
 
 DEFAULT_CONF_FILE = '~/.config/famulus.conf'
@@ -173,7 +173,7 @@ class Application:
     def _parse_cmd_run(self, args):
         names = read_from_stdin() if args.names[0] == '-' else args.names
         suite = self._test_mgr.create_suite_for_names(names)
-        runner = create_test_runner(args.event_format)
+        runner = create_suite_runner(args.event_format)
         result = runner.run(suite)
         if result.is_failure:
             rc = 6
