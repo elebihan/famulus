@@ -31,7 +31,7 @@
 
 from .event import EventLogger, EventLoggerFormat, TestEvent
 from .command import CommandRunner
-from .test import TestResult, SuiteResult
+from .result import TestResult, SuiteResult
 from .time import Stopwatch
 from .log import debug
 from gettext import gettext as _
