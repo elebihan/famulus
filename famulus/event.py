@@ -164,8 +164,17 @@ EventLoggerFormat = Enum('EventLoggerFormat', 'human machine')
 
 class EventLogger(BaseEventHandler):
     """Log events to standard output"""
-    def __init__(self):
-        self.format = EventLoggerFormat.human
+    def __init__(self, format=EventLoggerFormat.human):
+        self._format = format
+
+    @property
+    def format(self):
+        """Return the format used for logging events.
+
+        @return: the format used for logging events
+        @rtype: EventLoggerFormat
+        """
+        return self._format
 
     def handle(self, source, event, data=None):
         formatter = self._create_formatter()
