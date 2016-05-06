@@ -31,6 +31,7 @@
 
 import abc
 import sys
+from colorama import Fore, Style
 from datetime import datetime
 from enum import Enum
 from gettext import gettext as _
@@ -66,8 +67,10 @@ class DummyEventHandler(BaseEventHandler):
         pass
 
 
-class HumanEventFormatter:
-    """Format an event for a human"""
+class EventFormatter:
+    """Abstract base class for formatting an event"""
+    def __init__(self, colored):
+        self._colored = colored
 
     def format(self, source, event, data):
         """Format the event.
@@ -84,43 +87,46 @@ class HumanEventFormatter:
         @return: event formatted as text
         @rtype: str
         """
+        raise NotImplementedError
+
+    def _colorize(self, text, color):
+        if self._colored:
+            return color + text + Style.RESET_ALL
+        else:
+            return text
+
+
+class HumanEventFormatter(EventFormatter):
+    """Format an event for a human"""
+
+    def format(self, source, event, data):
         text = ""
         if type(source).__name__ == 'Suite':
             if source.name != 'root':
                 if event == TestEvent.success:
-                    text = "{:<48} [PASSED]\n".format(source.brief + "...")
+                    text = "{:<48} [{}]\n".format(source.brief + "...",
+                                                  self._colorize('PASSED',
+                                                                 Fore.GREEN))
                 elif event == TestEvent.failure:
-                    text = "{:<48} [FAILED]\n".format(source.brief + "...")
+                    text = "{:<48} [{}]\n".format(source.brief + "...",
+                                                  self._colorize('FAILED',
+                                                                 Fore.RED))
         else:
             if event == TestEvent.begin:
                 text = "{:<48} ".format(source.brief + "...")
             elif event == TestEvent.failure:
-                text = "[FAILED]"
+                text = "[{}]".format(self._colorize('FAILED', Fore.RED))
             elif event == TestEvent.success:
-                text = "[PASSED]"
+                text = "[{}]".format(self._colorize('PASSED', Fore.GREEN))
             elif event == TestEvent.end:
                 text = "\n"
         return text
 
 
-class MachineEventFormatter:
+class MachineEventFormatter(EventFormatter):
     """Format an event for a machine"""
 
     def format(self, source, event, data):
-        """Format the event.
-
-        @param source: source of the event
-        @type source: BaseTest
-
-        @param event: the event which occured
-        @type event: TestEvent
-
-        @param data: additional data
-        @type data: any Python type
-
-        @return: event formatted as text
-        @rtype: str
-        """
         messages = {
             TestEvent.begin: (
                 _("start"),
@@ -131,11 +137,11 @@ class MachineEventFormatter:
                 None,
             ),
             TestEvent.failure: (
-                _("failure"),
+                self._colorize(_("failure"), Fore.RED),
                 None,
             ),
             TestEvent.success: (
-                _("success"),
+                self._colorize(_("success"), Fore.GREEN),
                 None,
             ),
         }
@@ -165,12 +171,18 @@ class EventLogger(BaseEventHandler):
         return self._format
 
     def handle(self, source, event, data=None):
+        formatter = self._create_formatter()
+        text = formatter.format(source, event, data)
+        sys.stdout.write(text)
+
+    def _create_formatter(self):
         formatters = {
             EventLoggerFormat.human: HumanEventFormatter,
             EventLoggerFormat.machine: MachineEventFormatter,
         }
         klass = formatters[self.format]
-        text = klass().format(source, event, data)
-        sys.stdout.write(text)
+        return klass(sys.stdout.isatty())
+
+
 
 # vim: ts=4 sw=4 sts=4 et ai
