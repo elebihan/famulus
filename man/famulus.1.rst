@@ -21,6 +21,8 @@ famulus list [OPTIONS] {suites|tests}
 
 famulus new [OPTIONS] {suite|test} <name>
 
+famulus run [OPTIONS] <name> [<name>, ...]
+
 famulus show [OPTIONS] {suite|test} <name>
 
 DESCRIPTION
@@ -63,6 +65,19 @@ Available options:
 
 -f NAME, --from=NAME    use NAME as template
 -O DIR, --output=DIR    set output directory
+
+run [OPTIONS] <name> [<name>, ...]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Run one or more test/suite.
+
+By default, the events occuring during the execution of a test/suite are
+formatted in a human-friendly way. Use *--event-format=machine* to format them
+for machine processing.
+
+Available options:
+
+-F FMT, --event-format=FMT    set event logging format
 
 show [OPTIONS] {suite|test} <name>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
