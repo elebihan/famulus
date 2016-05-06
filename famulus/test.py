@@ -28,9 +28,6 @@
    :license: GPLv3+
 """
 
-from .log import debug
-from .event import TestEvent, DummyEventHandler
-from .time import Stopwatch
 from enum import Enum
 from gettext import gettext as _
 
@@ -46,31 +43,10 @@ class BaseTest:
         self.author = _('Unknown')
         self.brief = _('No brief description available')
         self.description = _('No description available')
-        self.event_handler = DummyEventHandler()
-        self._stopwatch = Stopwatch()
 
     @property
     def name(self):
         return self._name
-
-    @property
-    def stopwatch(self):
-        """Return the stopwatch used"""
-        return self._stopwatch
-
-    def run(self):
-        raise NotImplementedError
-
-    def _notify_event(self, event, data=None):
-        self.event_handler.handle(self, event, data)
-
-    def _record_begin(self):
-        self._stopwatch.start()
-        self._notify_event(TestEvent.begin)
-
-    def _record_end(self):
-        self._stopwatch.stop()
-        self._notify_event(TestEvent.end)
 
 
 class Test(BaseTest):
@@ -92,28 +68,15 @@ class Test(BaseTest):
         self.setup = []
         self.teardown = []
 
-    def run(self):
-        """Run the test"""
-        debug(_("Running test {}").format(self.name))
-        self._record_begin()
-        self._run_setup()
-        result = self._run_command()
-        self._run_teardown()
-        self._record_end()
-        return result
+    @property
+    def command(self):
+        """Return the command to be run for test"""
+        return self._command
 
-    def _run_setup(self):
-        self._notify_event(TestEvent.setup)
-
-    def _run_teardown(self):
-        self._notify_event(TestEvent.teardown)
-
-    def _run_command(self):
-        self._notify_event(TestEvent.command)
-        result = TestResult(self)
-        event = TestEvent.success if result.is_success else TestEvent.failure
-        self._notify_event(event)
-        return result
+    @property
+    def expect(self):
+        """Return the expected result of the command"""
+        return self._expect
 
 
 class Suite(BaseTest):
@@ -150,22 +113,6 @@ class Suite(BaseTest):
         @type suite: Suite
         """
         self._suites.append(suite)
-
-    def run(self):
-        """Run all the tests, then all the suites"""
-        debug(_("Running suite {}").format(self.name))
-        self._record_begin()
-        result = SuiteResult(self)
-        for test in self._tests:
-            t_result = test.run()
-            result.test_results.append(t_result)
-        for suite in self._suites:
-            s_result = suite.run()
-            result.suite_results.append(s_result)
-        event = TestEvent.success if result.is_success else TestEvent.failure
-        self._notify_event(event)
-        self._record_end()
-        return result
 
 
 TestStatus = Enum('TestStatus', 'passed failed')
