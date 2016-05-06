@@ -157,18 +157,9 @@ EventLoggerFormat = Enum('EventLoggerFormat', 'human machine')
 
 
 class EventLogger(BaseEventHandler):
-    """Log events to standard output.
-
-    @param format: format for logging events
-    @type format: EventLoggerFormat
-    """
-    def __init__(self, format=EventLoggerFormat.human):
-        self._format = format
-
-    @property
-    def format(self):
-        """Return the format used for logging events"""
-        return self._format
+    """Log events to standard output"""
+    def __init__(self):
+        self.format = EventLoggerFormat.human
 
     def handle(self, source, event, data=None):
         formatter = self._create_formatter()
@@ -182,7 +173,5 @@ class EventLogger(BaseEventHandler):
         }
         klass = formatters[self.format]
         return klass(sys.stdout.isatty())
-
-
 
 # vim: ts=4 sw=4 sts=4 et ai
