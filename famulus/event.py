@@ -37,7 +37,8 @@ from enum import Enum
 from gettext import gettext as _
 
 
-TestEvent = Enum('TestEvent', 'begin end failure success')
+TestEvent = Enum('TestEvent',
+                 'begin end failure success setup command teardown')
 
 
 class BaseEventHandler:
@@ -142,6 +143,18 @@ class MachineEventFormatter(EventFormatter):
             ),
             TestEvent.success: (
                 self._colorize(_("success"), Fore.GREEN),
+                None,
+            ),
+            TestEvent.command: (
+                _("command"),
+                None,
+            ),
+            TestEvent.setup: (
+                _("setup"),
+                None,
+            ),
+            TestEvent.teardown: (
+                _("teardown"),
                 None,
             ),
         }
