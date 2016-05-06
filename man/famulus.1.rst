@@ -34,6 +34,7 @@ OPTIONS
 -V, --version             display program version and exit
 -C FILE, --config FILE    set path to configuration file
 -D, --debug               show debug messages
+-T DIR, --tests-path DIR  add path to tests/suites
 
 COMMANDS
 ========
