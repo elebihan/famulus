@@ -29,7 +29,8 @@
    :license: GPLv3+
 """
 
-from .event import EventLogger
+from .event import EventLogger, EventLoggerFormat
+from gettext import gettext as _
 
 
 class TestRunner:
@@ -54,6 +55,25 @@ def propagate_event_handler(suite, event_handler):
         t.event_handler = event_handler
     for s in suite.suites:
         propagate_event_handler(s, event_handler)
+
+
+def create_test_runner(format):
+    """Create a tailor-made test runner.
+
+    @param format: event logger format as string
+    @type format: string
+
+    @return: a test runner
+    @rtype: TestRunner
+    """
+    if format in [e.name for e in EventLoggerFormat]:
+        format = EventLoggerFormat[format]
+    else:
+        ValueError(_("unsupported event logging format"))
+
+    runner = TestRunner()
+    runner.event_handler.format = format
+    return runner
 
 
 # vim: ts=4 sw=4 sts=4 et ai
