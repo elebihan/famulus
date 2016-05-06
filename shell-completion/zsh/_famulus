@@ -100,6 +100,7 @@ _famulus_list_all_suites()
 (( $+functions[_famulus_run] )) || _famulus_run()
 {
     _arguments -w -S -s \
+               '(-F --event-format)'{-F,--event-format}'[set event logging format]:FORMAT:(human machine)' \
                '1: :->name'
 
     if [[ "$state" == name ]]; then
