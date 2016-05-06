@@ -61,13 +61,6 @@ class BaseEventHandler:
         return
 
 
-class DummyEventHandler(BaseEventHandler):
-    """Dummy event handler"""
-
-    def handle(self, source, event, data=None):
-        pass
-
-
 class EventFormatter:
     """Abstract base class for formatting an event"""
     def __init__(self, colored):
