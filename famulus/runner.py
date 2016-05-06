@@ -30,6 +30,7 @@
 """
 
 from .event import EventLogger, EventLoggerFormat, TestEvent
+from .command import CommandRunner
 from .test import TestResult, SuiteResult
 from .time import Stopwatch
 from .log import debug
@@ -38,14 +39,20 @@ from gettext import gettext as _
 
 class BaseRunner:
     """Abstract base class for running tests or suites"""
-    def __init__(self, event_handler):
-        self.event_handler = event_handler
+    def __init__(self, cmd_runner, evt_handler):
+        self._cmd_runner = cmd_runner
+        self.event_handler = evt_handler
         self._stopwatch = Stopwatch()
 
     @property
     def stopwatch(self):
         """Return the stopwatch used"""
         return self._stopwatch
+
+    @property
+    def cmd_runner(self):
+        """Return the command runner used"""
+        return self._cmd_runner
 
     def run(self):
         raise NotImplementedError
@@ -64,8 +71,8 @@ class BaseRunner:
 
 class TestRunner(BaseRunner):
     """Run a test"""
-    def __init__(self, event_handler=EventLogger()):
-        BaseRunner.__init__(self, event_handler)
+    def __init__(self, cmd_runner, evt_handler=EventLogger()):
+        BaseRunner.__init__(self, cmd_runner, evt_handler)
 
     def run(self, test):
         """Run a test.
@@ -87,16 +94,16 @@ class TestRunner(BaseRunner):
     def _run_setup(self, test):
         self._notify_event(test, TestEvent.setup)
         for command in test.setup:
-            debug(_("Executing {}").format(command))
+            self.cmd_runner.run(command)
 
     def _run_teardown(self, test):
         self._notify_event(test, TestEvent.teardown)
         for command in test.teardown:
-            debug(_("Executing {}").format(command))
+            self.cmd_runner.run(command)
 
     def _run_command(self, test):
         self._notify_event(test, TestEvent.command)
-        debug(_("Executing {}").format(test.command))
+        self.cmd_runner.run(test.command)
         result = TestResult(test)
         event = TestEvent.success if result.is_success else TestEvent.failure
         self._notify_event(test, event)
@@ -105,8 +112,8 @@ class TestRunner(BaseRunner):
 
 class SuiteRunner(BaseRunner):
     """Run a suite"""
-    def __init__(self, event_handler=EventLogger()):
-        BaseRunner.__init__(self, event_handler)
+    def __init__(self, cmd_runner, evt_handler=EventLogger()):
+        BaseRunner.__init__(self, cmd_runner, evt_handler)
 
     def run(self, suite):
         """Run a suite.
@@ -134,11 +141,11 @@ class SuiteRunner(BaseRunner):
         return result
 
     def _run_test(self, test):
-        t_runner = TestRunner(self.event_handler)
+        t_runner = TestRunner(self.cmd_runner, self.event_handler)
         return t_runner.run(test)
 
     def _run_suite(self, suite):
-        s_runner = SuiteRunner(self.event_handler)
+        s_runner = SuiteRunner(self.cmd_runner, self.event_handler)
         return s_runner.run(suite)
 
 
@@ -156,7 +163,7 @@ def create_suite_runner(format):
     else:
         ValueError(_("unsupported event logging format"))
 
-    runner = SuiteRunner()
+    runner = SuiteRunner(CommandRunner())
     runner.event_handler.format = format
     return runner
 
