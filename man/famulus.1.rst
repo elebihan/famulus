@@ -19,6 +19,8 @@ famulus list [OPTIONS] {suites|tests}
 
 famulus new [OPTIONS] {suite|test} <name>
 
+famulus show [OPTIONS] {suite|test} <name>
+
 DESCRIPTION
 ===========
 
@@ -53,6 +55,11 @@ Available options:
 
 -f NAME, --from=NAME    use NAME as template
 -O DIR, --output=DIR    set output directory
+
+show [OPTIONS] {suite|test} <name>
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Print information about a test or a suite.
 
 ENVIRONMENT VARIABLES
 =====================
