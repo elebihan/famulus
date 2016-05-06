@@ -15,6 +15,8 @@ SYNOPSIS
 
 famulus [OPTIONS] <command> [<argument>,...]
 
+famulus edit [OPTIONS] {suites|tests} <name>
+
 famulus list [OPTIONS] {suites|tests}
 
 famulus new [OPTIONS] {suite|test} <name>
@@ -37,6 +39,11 @@ COMMANDS
 ========
 
 The following commands are available:
+
+edit [OPTIONS] {suite|test} <name>
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Edit the specification of a test or suite.
 
 list [OPTIONS] {suites|tests}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
