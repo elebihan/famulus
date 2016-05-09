@@ -3,16 +3,17 @@ name: test-02
 type: test
 category: system
 author: Stewie Griffin
-brief: Check function 02
+brief: Check if Linux kernel is 3.4
 description: >
   This test specification is valid.
 
   No errors in it.
 
 setup:
-  - echo Hello!
   - local(echo Hello!)
+  - echo Hello!
 teardown:
   - echo Goodbye!
+  - local(echo Hello!)
 command: uname -r
 expect: ^3.4$

@@ -3,16 +3,16 @@ name: test-01
 type: test
 category: system
 author: Stewie Griffin
-brief: Check function 01
+brief: Check if system is GNU/Linux
 description: >
   This test specification is valid.
 
   No errors in it.
 
 setup:
-  - echo Hello!
   - local(echo Hello!)
+  - echo Hello!
 teardown:
   - echo Goodbye!
-command: uname -r
-expect: ^3.4$
+command: uname -o
+expect: ^GNU/Linux$
