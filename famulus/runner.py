@@ -190,7 +190,7 @@ def create_suite_runner(uri, format):
 
     debug(_("URI (unused): {}").format(uri))
 
-    runner = SuiteRunner(CommandRunner(), EventLogger(format))
+    runner = SuiteRunner(CommandRunner(uri), EventLogger(format))
     return runner
 
 
