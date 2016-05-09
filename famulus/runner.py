@@ -171,8 +171,11 @@ class SuiteRunner(BaseRunner):
         return s_runner.run(suite)
 
 
-def create_suite_runner(format):
+def create_suite_runner(uri, format):
     """Create a tailor-made suite runner.
+
+    @param uri: URI of the target
+    @type uri: str
 
     @param format: event logger format as string
     @type format: string
@@ -184,6 +187,8 @@ def create_suite_runner(format):
         format = EventLoggerFormat[format]
     else:
         ValueError(_("unsupported event logging format"))
+
+    debug(_("URI (unused): {}").format(uri))
 
     runner = SuiteRunner(CommandRunner(), EventLogger(format))
     return runner
