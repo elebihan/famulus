@@ -21,7 +21,7 @@ famulus list [OPTIONS] {suites|tests}
 
 famulus new [OPTIONS] {suite|test} <name>
 
-famulus run [OPTIONS] <name> [<name>, ...]
+famulus run [OPTIONS] <URI> <name> [<name>, ...]
 
 famulus show [OPTIONS] {suite|test} <name>
 
@@ -66,10 +66,10 @@ Available options:
 -f NAME, --from=NAME    use NAME as template
 -O DIR, --output=DIR    set output directory
 
-run [OPTIONS] <name> [<name>, ...]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+run [OPTIONS] <URI> <name> [<name>, ...]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Run one or more test/suite.
+Run one or more test/suite on target identified by its URI.
 
 By default, the events occuring during the execution of a test/suite are
 formatted in a human-friendly way. Use *--event-format=machine* to format them
