@@ -22,7 +22,7 @@
    famulus.command
    ```````````````
 
-   Classes and helper functions for running commands on host or target.
+   Classes and helper functions for running commands on local/remote machine.
 
 
    :copyright: (C) 2016 Eric Le Bihan <eric.le.bihan.dev@free.fr>
@@ -31,11 +31,22 @@
 
 import re
 from .log import debug
+from .clients.factory import ClientFactory
 from gettext import gettext as _
 
 
 class CommandRunner:
-    """Run commands on host or target"""
+    """Run commands on local/remote machine.
+
+    @param uri: URI of the remote machine
+    @type uri: str
+    """
+    def __init__(self, uri):
+        factory = ClientFactory()
+        self._clients = {
+            'local': factory.create_client_for_uri('local://'),
+            'remote': factory.create_client_for_uri(uri),
+        }
 
     def run(self, command):
         """Execute a command.
@@ -46,12 +57,16 @@ class CommandRunner:
         @return: the output of the command
         @rtype: str
         """
-        match = re.match(r'host\((.+)\)', command)
+        match = re.match(r'([\w]+)\((.+)\)', command)
         if match:
-            msg = _("Executing on host: {}").format(match.group(1))
+            scheme = match.group(1)
+            command = match.group(2)
         else:
-            msg = _("Executing on target: {}").format(command)
+            scheme = 'remote'
+        msg = _("Executing on {}: {}").format(scheme, command)
         debug(msg)
+        client = self._clients[scheme]
+        return client.execute(command)
 
 
 # vim: ts=4 sw=4 sts=4 et ai
