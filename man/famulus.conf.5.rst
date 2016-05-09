@@ -42,6 +42,12 @@ General
 * Editor: the text editor to use
 * TestsPaths: comma separated list of paths to test/suite files
 
+Connection
+----------
+
+* Username: name to use for connection
+* Password: password to use for connection
+
 SEE ALSO
 ========
 
