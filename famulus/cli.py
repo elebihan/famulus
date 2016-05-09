@@ -127,6 +127,8 @@ class Application:
                        choices=('human', 'machine'),
                        default='human',
                        help=_('set event logging format'))
+        p.add_argument('URI',
+                       help=_(('URI of the target')))
         p.add_argument('names',
                        nargs='+',
                        metavar=_('NAME'),
@@ -173,7 +175,7 @@ class Application:
     def _parse_cmd_run(self, args):
         names = read_from_stdin() if args.names[0] == '-' else args.names
         suite = self._test_mgr.create_suite_for_names(names)
-        runner = create_suite_runner(args.event_format)
+        runner = create_suite_runner(args.URI, args.event_format)
         result = runner.run(suite)
         if result.is_failure:
             rc = 6
