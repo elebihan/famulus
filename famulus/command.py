@@ -42,6 +42,9 @@ class CommandRunner:
 
         @param command: the command to run
         @type command: str
+
+        @return: the output of the command
+        @rtype: str
         """
         match = re.match(r'host\((.+)\)', command)
         if match:
