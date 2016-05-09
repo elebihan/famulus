@@ -29,12 +29,19 @@
    :license: GPLv3+
 """
 
+import re
 from .event import EventLogger, EventLoggerFormat, TestEvent
 from .command import CommandRunner
-from .result import TestResult, SuiteResult
+from .result import TestResult, SuiteResult, TestStatus
 from .time import Stopwatch
 from .log import debug
 from gettext import gettext as _
+
+
+class ExpectationError(Exception):
+    """Error raised when the result of a command does not meet expectation"""
+    def __init__(self):
+        Exception.__init__(self, _("Command result does not meet expectation"))
 
 
 class BaseRunner:
@@ -108,11 +115,21 @@ class TestRunner(BaseRunner):
 
     def _run_command(self, test):
         self._notify_event(test, TestEvent.command)
-        self.cmd_runner.run(test.command)
-        result = TestResult(test)
+        result = TestResult(test, TestStatus.passed)
+        try:
+            output = self.cmd_runner.run(test.command)
+            self._check_output(test, output)
+        except Exception as e:
+            debug(_("Test failed ({})").format(e))
+            result.status = TestStatus.failed
         event = TestEvent.success if result.is_success else TestEvent.failure
         self._notify_event(test, event)
         return result
+
+    def _check_output(self, test, output):
+        if test.expect:
+            if not output or not re.match(test.expect, output):
+                raise ExpectationError
 
 
 class SuiteRunner(BaseRunner):
