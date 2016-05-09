@@ -24,6 +24,6 @@ setup:
 teardown:
   - echo Goodbye!
 # Command to run for the test
-command: uname -r
+command: uname -o
 # Expected result (may be a regular expression)
-expect: ^3.4$
+expect: ^GNU/Linux$
