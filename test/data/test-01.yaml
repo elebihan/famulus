@@ -11,7 +11,7 @@ description: >
 
 setup:
   - echo Hello!
-  - host(echo Hello!)
+  - local(echo Hello!)
 teardown:
   - echo Goodbye!
 command: uname -r
