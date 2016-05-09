@@ -19,7 +19,7 @@ description: >
 setup:
   - send(/some/file)  # Send a file (only available over SSH connection
   - echo Hello!       # Executed on the target
-  - host(echo Hello!) # Executed on the host
+  - local(echo Hello!) # Executed on the local machine
 # Commands to run after the test
 teardown:
   - echo Goodbye!
