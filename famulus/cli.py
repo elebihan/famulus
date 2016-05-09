@@ -31,6 +31,7 @@
 import os
 import argparse
 import traceback
+import urllib.parse
 from famulus import __version__
 from famulus.utils import setup_i18n, read_from_stdin
 from famulus.log import setup_logging, set_level
@@ -173,9 +174,10 @@ class Application:
             self._parser.error(_('Invalid object'))
 
     def _parse_cmd_run(self, args):
+        uri = self._build_full_uri(args.URI)
         names = read_from_stdin() if args.names[0] == '-' else args.names
         suite = self._test_mgr.create_suite_for_names(names)
-        runner = create_suite_runner(args.URI, args.event_format)
+        runner = create_suite_runner(uri, args.event_format)
         result = runner.run(suite)
         if result.is_failure:
             rc = 6
@@ -183,6 +185,21 @@ class Application:
         else:
             rc = 0
         self._parser.exit(rc)
+
+    def _build_full_uri(self, uri):
+        crumbs = urllib.parse.urlsplit(uri)
+        username = crumbs.username or self._config.username
+        password = crumbs.password or self._config.password
+        if username:
+            netloc = username
+            if password:
+                netloc += ':' + password
+            netloc += '@' + crumbs.hostname
+        else:
+            netloc = crumbs.hostname
+        fields = list(crumbs)
+        fields[1] = netloc
+        return urllib.parse.urlunsplit(fields)
 
     def run(self):
         """Run the application"""
