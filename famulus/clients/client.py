@@ -41,7 +41,14 @@ class Client:
     """Abstract base class for interacting with local/remote machine"""
     __metaclass__ = abc.ABCMeta
 
-    _connected = False
+    def __init__(self, hostname):
+        self._connected = False
+        self._hostname = hostname
+
+    @property
+    def hostname(self):
+        """FQDN or IP address of the machine"""
+        return self._hostname
 
     @abc.abstractmethod
     def connect(self):
