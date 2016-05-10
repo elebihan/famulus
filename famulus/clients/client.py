@@ -32,7 +32,7 @@ import abc
 
 
 class CommandFailedError(Exception):
-    """Error raised when a command executed on the machine faile"""
+    """Error raised when a command executed on the machine failed"""
     def __init__(self, message):
         Exception.__init__(self, message)
 
