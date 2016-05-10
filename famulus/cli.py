@@ -38,8 +38,9 @@ from famulus.log import setup_logging, set_level
 from famulus.log import error, warning
 from famulus.config import Configuration, DEFAULT_TESTS_PATH
 from famulus.spec import SpecType
+from famulus.event import EventLoggerFormat
 from famulus.testmanager import TestManager
-from famulus.runner import create_suite_runner
+from famulus.runner import run_suite
 from gettext import gettext as _
 
 DEFAULT_CONF_FILE = '~/.config/famulus.conf'
@@ -174,11 +175,11 @@ class Application:
             self._parser.error(_('Invalid object'))
 
     def _parse_cmd_run(self, args):
+        event_format = EventLoggerFormat.parse(args.event_format)
         uri = self._build_full_uri(args.URI)
         names = read_from_stdin() if args.names[0] == '-' else args.names
         suite = self._test_mgr.create_suite_for_names(names)
-        runner = create_suite_runner(uri, args.event_format)
-        result = runner.run(suite)
+        result = run_suite(suite, uri, event_format)
         if result.is_failure:
             rc = 6
             error(_("Some tests/suites failed"))
