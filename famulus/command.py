@@ -59,13 +59,13 @@ class CommandRunner:
         """
         match = re.match(r'([\w]+)\((.+)\)', command)
         if match:
-            scheme = match.group(1)
+            name = match.group(1)
             command = match.group(2)
         else:
-            scheme = 'remote'
-        msg = _("Executing on {}: {}").format(scheme, command)
+            name = 'remote'
+        msg = _("Executing on {}: {}").format(name, command)
         debug(msg)
-        client = self._clients[scheme]
+        client = self._clients[name]
         return client.execute(command)
 
 
