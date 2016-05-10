@@ -33,7 +33,7 @@ import argparse
 import traceback
 import urllib.parse
 from famulus import __version__
-from famulus.utils import setup_i18n, read_from_stdin
+from famulus.utils import setup_i18n, read_from_stdin, validate_uri
 from famulus.log import setup_logging, set_level
 from famulus.log import error, warning
 from famulus.config import Configuration, DEFAULT_TESTS_PATH
@@ -188,6 +188,7 @@ class Application:
         self._parser.exit(rc)
 
     def _build_full_uri(self, uri):
+        validate_uri(uri)
         crumbs = urllib.parse.urlsplit(uri)
         username = crumbs.username or self._config.username
         password = crumbs.password or self._config.password
