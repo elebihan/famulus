@@ -171,27 +171,26 @@ class SuiteRunner(BaseRunner):
         return s_runner.run(suite)
 
 
-def create_suite_runner(uri, format):
-    """Create a tailor-made suite runner.
+def run_suite(suite, uri, format):
+    """Run suite for remote machine.
 
-    @param uri: URI of the target
+    @param suite: suite to run
+    @type suite: Suite
+
+    @param uri: URI of the remote machine
     @type uri: str
 
-    @param format: event logger format as string
-    @type format: string
+    @param format: event logger format
+    @type format: EventLoggerFormat
 
-    @return: a suite runner
-    @rtype: SuiteRunner
+    @return: result of the execution of the suite
+    @rtype: SuiteResult
     """
-    if format in [e.name for e in EventLoggerFormat]:
-        format = EventLoggerFormat[format]
-    else:
-        ValueError(_("unsupported event logging format"))
-
-    debug(_("URI (unused): {}").format(uri))
-
     runner = SuiteRunner(CommandRunner(uri), EventLogger(format))
-    return runner
+    runner.cmd_runner.setup()
+    result = runner.run(suite)
+    runner.cmd_runner.teardown()
+    return result
 
 
 # vim: ts=4 sw=4 sts=4 et ai
