@@ -59,8 +59,9 @@ class ClientFactory:
         try:
             fields = urllib.parse.urlsplit(uri)
             klass = self._klasses[fields.scheme]
-            debug(_("Created client for scheme '{}'").format(fields.scheme))
-            return klass()
+            msg = _("Created client with scheme '{0.scheme}' for {0.hostname}")
+            debug(msg.format(fields))
+            return klass(fields.hostname)
         except:
             raise UnsupportedSchemeError
 
