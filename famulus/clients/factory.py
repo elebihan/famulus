@@ -34,6 +34,12 @@ from ..log import debug
 from gettext import gettext as _
 
 
+class UnsupportedSchemeError(Exception):
+    """Error raised when an unsupported scheme is used"""
+    def __init__(self):
+        Exception.__init__(self, _("Unsupported client URI scheme"))
+
+
 class ClientFactory:
     """Create local/remote clients"""
     def __init__(self):
@@ -50,10 +56,13 @@ class ClientFactory:
         @return: a pre-configured client
         @rtype: Client
         """
-        fields = urllib.parse.urlsplit(uri)
-        klass = self._klasses[fields.scheme]
-        debug(_("Created client for scheme '{}'").format(fields.scheme))
-        return klass()
+        try:
+            fields = urllib.parse.urlsplit(uri)
+            klass = self._klasses[fields.scheme]
+            debug(_("Created client for scheme '{}'").format(fields.scheme))
+            return klass()
+        except:
+            raise UnsupportedSchemeError
 
 
 # vim: ts=4 sw=4 sts=4 et ai
