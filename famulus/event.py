@@ -159,7 +159,14 @@ class MachineEventFormatter(EventFormatter):
         return text + '\n'
 
 
-EventLoggerFormat = Enum('EventLoggerFormat', 'human machine')
+class EventLoggerFormat(Enum):
+    human, machine = (0, 1)
+
+    @classmethod
+    def parse(klass, string):
+        if string in [e.name for e in klass]:
+            return klass[string]
+        raise ValueError(_("unsupported event logging format"))
 
 
 class EventLogger(BaseEventHandler):
