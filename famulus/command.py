@@ -63,7 +63,7 @@ class CommandRunner:
             command = match.group(2)
         else:
             name = 'remote'
-        msg = _("Executing on {}: {}").format(name, command)
+        msg = _("Executing via client '{}': {}").format(name, command)
         debug(msg)
         client = self._clients[name]
         return client.execute(command)
