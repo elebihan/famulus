@@ -44,7 +44,7 @@ class CommandRunner:
     def __init__(self, uri):
         factory = ClientFactory()
         self._clients = {
-            'local': factory.create_client_for_uri('local://'),
+            'local': factory.create_client_for_uri('local://localhost'),
             'remote': factory.create_client_for_uri(uri),
         }
 
