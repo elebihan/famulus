@@ -48,6 +48,18 @@ class CommandRunner:
             'remote': factory.create_client_for_uri(uri),
         }
 
+    def setup(self):
+        """Set up the command runner"""
+        for name, client in self._clients.items():
+            debug(_("Connecting client '{}'").format(name))
+            client.connect()
+
+    def teardown(self):
+        """Tear down the command runner"""
+        for name, client in self._clients.items():
+            debug(_("Disconnecting client '{}'").format(name))
+            client.disconnect()
+
     def run(self, command):
         """Execute a command.
 
