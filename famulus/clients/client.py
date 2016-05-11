@@ -41,9 +41,11 @@ class Client:
     """Abstract base class for interacting with local/remote machine"""
     __metaclass__ = abc.ABCMeta
 
-    def __init__(self, hostname):
+    def __init__(self, hostname, username=None, password=None):
         self._connected = False
         self._hostname = hostname
+        self._username = username
+        self._password = password
 
     @property
     def hostname(self):
