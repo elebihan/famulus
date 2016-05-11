@@ -30,6 +30,7 @@
 
 import urllib.parse
 from .local import LocalClient
+from .ssh import SSHClient
 from ..log import debug
 from gettext import gettext as _
 
@@ -45,6 +46,7 @@ class ClientFactory:
     def __init__(self):
         self._klasses = {
             "local": LocalClient,
+            "ssh": SSHClient,
         }
 
     def create_client_for_uri(self, uri):
