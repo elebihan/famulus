@@ -61,7 +61,9 @@ class ClientFactory:
             klass = self._klasses[fields.scheme]
             msg = _("Created client with scheme '{0.scheme}' for {0.hostname}")
             debug(msg.format(fields))
-            return klass(fields.hostname)
+            return klass(fields.hostname,
+                         username=fields.username,
+                         password=fields.password)
         except:
             raise UnsupportedSchemeError
 
