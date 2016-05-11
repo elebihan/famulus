@@ -37,7 +37,8 @@ setup(name='famulus',
       keywords=[],
       install_requires=[
           'colorama>=0.3',
-          'pyaml>=15.8'
+          'paramiko>=1.17',
+          'pyaml>=15.8',
       ],
       classifiers=[
           'Development Status :: 1 - Pre-Alpha',
