@@ -40,8 +40,6 @@ from gettext import gettext as _
 
 class ExpectationError(Exception):
     """Error raised when the result of a command does not meet expectation"""
-    def __init__(self):
-        Exception.__init__(self, _("Command result does not meet expectation"))
 
 
 class BaseRunner:
@@ -128,8 +126,12 @@ class TestRunner(BaseRunner):
 
     def _check_output(self, test, output):
         if test.expect:
-            if not output or not re.match(test.expect, output):
-                raise ExpectationError
+            debug(_("Expected: '{}").format(test.expect))
+            if not output:
+                raise ExpectationError(_("No output"))
+            debug(_("Received: '{}").format(output))
+            if not re.match(test.expect, output):
+                raise ExpectationError(_("Output does not meet expectation"))
 
 
 class SuiteRunner(BaseRunner):
