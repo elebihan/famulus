@@ -28,7 +28,7 @@ famulus show [OPTIONS] {suite|test} <name>
 DESCRIPTION
 ===========
 
-`famulus(1)` is a tool to run non-regression tests on a remote device.
+`famulus(1)` is a tool to run non-regression tests on a remote machine.
 
 OPTIONS
 =======
@@ -69,7 +69,10 @@ Available options:
 run [OPTIONS] <URI> <name> [<name>, ...]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Run one or more test/suite on target identified by its URI.
+Run one or more test/suite on target identified by its URI, which format is
+<scheme>://<hostname|IP address>. The support URI schemes are:
+
+- ssh://: connect to the machine via SSH
 
 By default, the events occuring during the execution of a test/suite are
 formatted in a human-friendly way. Use *--event-format=machine* to format them
@@ -92,3 +95,15 @@ Setting the following environment variables may alter the behavior of
 
 - FAMULUS_LOG: logging level (DEBUG, WARNING)
 - FAMULUS_SHOW_STACK_TRACES: if set, show Python stack trace on error.
+
+EXAMPLES
+========
+
+Run suites "foo" and "baz" on machine whose IP address is 192.168.0.1 via SSH::
+
+  $ famulus run ssh://192.168.0.1 foo baz
+
+SEE ALSO
+========
+
+- famulus.conf(5)
