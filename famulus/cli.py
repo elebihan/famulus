@@ -190,17 +190,17 @@ class Application:
     def _build_full_uri(self, uri):
         validate_uri(uri)
         crumbs = urllib.parse.urlsplit(uri)
+        fields = list(crumbs)
         username = crumbs.username or self._config.username
         password = crumbs.password or self._config.password
         if username:
             netloc = username
             if password:
                 netloc += ':' + password
-            netloc += '@' + crumbs.hostname
-        else:
-            netloc = crumbs.hostname
-        fields = list(crumbs)
-        fields[1] = netloc
+            netloc += '@'
+            if crumbs.hostname:
+                netloc += crumbs.hostname
+            fields[1] = netloc
         return urllib.parse.urlunsplit(fields)
 
     def run(self):
