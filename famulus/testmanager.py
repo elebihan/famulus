@@ -67,6 +67,9 @@ class TestManager:
     def scan(self):
         """Scan all known search paths for tests/suites"""
         for path in reversed(self._search_paths):
+            if not os.path.isdir(path):
+                warning(_("Skipping invalid search path {}".format(path)))
+                continue
             debug(_("Searching for tests/suites in {}").format(path))
             for entry in os.listdir(path):
                 fn = os.path.join(path, entry)
