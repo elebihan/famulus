@@ -30,23 +30,27 @@
 
 
 import paramiko
-from .client import Client, CommandFailedError
+from .client import Client, CommandFailedError, MissingCredentialsError
 from ..log import debug
 from gettext import gettext as _
 
 
 class SSHClient(Client):
     """Client which interacts with machine via SSH"""
-    def __init__(self, hostname, username, password):
-        Client.__init__(self, hostname, username, password)
+    def __init__(self, resource):
+        Client.__init__(self, resource)
         self._ssh = paramiko.SSHClient()
         self._ssh.set_missing_host_key_policy(paramiko.client.AutoAddPolicy())
         self._shell = '/bin/sh -l -c'
 
     def connect(self):
-        self._ssh.connect(self._hostname,
-                          username=self._username,
-                          password=self._password,
+        if not self.username:
+            raise MissingCredentialsError(_("missing username"))
+        if not self.password:
+            raise MissingCredentialsError(_("missing password"))
+        self._ssh.connect(self.resource,
+                          username=self.username,
+                          password=self.password,
                           look_for_keys=False,
                           allow_agent=False)
         self._connected = True
