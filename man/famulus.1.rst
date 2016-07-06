@@ -69,10 +69,14 @@ Available options:
 run [OPTIONS] <URI> <name> [<name>, ...]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Run one or more test/suite on target identified by its URI, which format is
-<scheme>://<hostname|IP address>. The support URI schemes are:
+Run one or more tests/suites on target identified by its URI, which format is
+<scheme>://<resource>. The support schemes are:
 
-- ssh://: connect to the machine via SSH
+- "ssh": interact with the target via SSH. The resource is either a FQDN or an
+  IP address, associated with an username and a password. Example:
+  "ssh://foo:secret@192.168.0.1".
+
+Credentials are fetched from the configuration file when omitted in the URI.
 
 By default, the events occuring during the execution of a test/suite are
 formatted in a human-friendly way. Use *--event-format=machine* to format them
