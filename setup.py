@@ -38,6 +38,9 @@ setup(name='famulus',
       install_requires=[
           'colorama>=0.3',
           'paramiko>=1.17',
+          'pexpect>=4.1',
+          'pexpect_serial>=0.0.4',
+          'pyserial>=3.1',
           'pyaml>=15.8',
       ],
       classifiers=[
