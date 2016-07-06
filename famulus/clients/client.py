@@ -37,20 +37,24 @@ class CommandFailedError(Exception):
         Exception.__init__(self, message)
 
 
+class MissingCredentialsError(Exception):
+    """Error raised when credentials required for connection are missing"""
+
+
 class Client:
     """Abstract base class for interacting with local/remote machine"""
     __metaclass__ = abc.ABCMeta
 
-    def __init__(self, hostname, username=None, password=None):
+    def __init__(self, resource):
+        self._resource = resource
         self._connected = False
-        self._hostname = hostname
-        self._username = username
-        self._password = password
+        self.username = None
+        self.password = None
 
     @property
-    def hostname(self):
-        """FQDN or IP address of the machine"""
-        return self._hostname
+    def resource(self):
+        """Resource associated with the machine"""
+        return self._resource
 
     @abc.abstractmethod
     def connect(self):
