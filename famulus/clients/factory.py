@@ -60,14 +60,21 @@ class ClientFactory:
         """
         try:
             fields = urllib.parse.urlsplit(uri)
-            klass = self._klasses[fields.scheme]
-            msg = _("Created client with scheme '{0.scheme}' for {0.hostname}")
-            debug(msg.format(fields))
-            return klass(fields.hostname,
-                         username=fields.username,
-                         password=fields.password)
         except:
             raise UnsupportedSchemeError
 
+        klass = self._klasses[fields.scheme]
+        if fields.hostname:
+            resource = fields.hostname
+        elif fields.path:
+            resource = fields.path
+        else:
+            raise UnsupportedSchemeError
+        msg = _("Created client with scheme '{}' for {}")
+        debug(msg.format(fields.scheme, resource))
+        client = klass(resource)
+        client.username = fields.username
+        client.password = fields.password
+        return client
 
 # vim: ts=4 sw=4 sts=4 et ai
