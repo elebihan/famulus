@@ -64,10 +64,10 @@ class ClientFactory:
         """
         try:
             fields = urllib.parse.urlsplit(uri)
+            klass = self._klasses[fields.scheme]
         except:
             raise UnsupportedSchemeError
 
-        klass = self._klasses[fields.scheme]
         if fields.hostname:
             resource = fields.hostname
         elif fields.path:
