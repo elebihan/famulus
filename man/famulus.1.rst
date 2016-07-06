@@ -79,7 +79,9 @@ Run one or more tests/suites on target identified by its URI, which format is
   resource is the path to the character device of the serial TTY, associated
   with the credentials ("stty://foo:secret@/dev/ttyS0"). On Microsoft Windows,
   it is the name of serial port ("stty://foo:secret@/COM4").
-
+- "uboot": interact with the target running U-Boot, connected via serial port.
+  The resource is the same as for "stty", but no credentials are required.
+  Examples: "uboot:///dev/ttyS0", "uboot:///COM4".
 
 Credentials are fetched from the configuration file when omitted in the URI.
 
