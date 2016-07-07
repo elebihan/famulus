@@ -31,9 +31,9 @@
 import os
 import argparse
 import traceback
-import urllib.parse
 from famulus import __version__
-from famulus.utils import setup_i18n, read_from_stdin, validate_uri
+from famulus.utils import setup_i18n, read_from_stdin
+from famulus.uri import rebuild_uri
 from famulus.log import setup_logging, set_level
 from famulus.log import error, warning
 from famulus.config import Configuration, DEFAULT_TESTS_PATH
@@ -176,7 +176,7 @@ class Application:
 
     def _parse_cmd_run(self, args):
         event_format = EventLoggerFormat.parse(args.event_format)
-        uri = self._build_full_uri(args.URI)
+        uri = rebuild_uri(args.URI, self._config, ('uboot'))
         names = read_from_stdin() if args.names[0] == '-' else args.names
         suite = self._test_mgr.create_suite_for_names(names)
         result = run_suite(suite, uri, event_format)
@@ -186,25 +186,6 @@ class Application:
         else:
             rc = 0
         self._parser.exit(rc)
-
-    def _build_full_uri(self, uri):
-        validate_uri(uri)
-        crumbs = urllib.parse.urlsplit(uri)
-        if crumbs.scheme not in ('uboot'):
-            fields = list(crumbs)
-            username = crumbs.username or self._config.username
-            password = crumbs.password or self._config.password
-            if username:
-                netloc = username
-                if password:
-                    netloc += ':' + password
-                netloc += '@'
-                if crumbs.hostname:
-                    netloc += crumbs.hostname
-                fields[1] = netloc
-            return urllib.parse.urlunsplit(fields)
-        else:
-            return uri
 
     def run(self):
         """Run the application"""
