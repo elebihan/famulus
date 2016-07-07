@@ -30,8 +30,10 @@
 
 import io
 import serial
+import pexpect
 import pexpect_serial
 from ..log import debug
+from ..errors import TimeoutError
 from gettext import gettext as _
 
 
@@ -103,11 +105,14 @@ class SerialInteractor:
         Read data from the serial port and look for a given pattern. When
         found, all the data read is returned as a list of character strings.
         """
-        debug(_("Expecting {}".format(pattern)))
-        self._child.expect(pattern)
-        lines = self._output.getvalue().split('\n')
-        self._output.truncate(0)
-        return lines[1:-1]
+        try:
+            debug(_("Expecting {}".format(pattern)))
+            self._child.expect(pattern)
+            lines = self._output.getvalue().split('\n')
+            self._output.truncate(0)
+            return lines[1:-1]
+        except pexpect.exceptions.TIMEOUT:
+            raise TimeoutError(_("timeout when waiting for pattern"))
 
     def reset_buffers(self):
         """Reset internal input/output buffers"""
