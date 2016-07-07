@@ -190,8 +190,10 @@ def run_suite(suite, uri, format):
     """
     runner = SuiteRunner(CommandRunner(uri), EventLogger(format))
     runner.cmd_runner.setup()
-    result = runner.run(suite)
-    runner.cmd_runner.teardown()
+    try:
+        result = runner.run(suite)
+    finally:
+        runner.cmd_runner.teardown()
     return result
 
 
