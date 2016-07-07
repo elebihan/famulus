@@ -108,7 +108,7 @@ class SerialInteractor:
         try:
             debug(_("Expecting '{}'".format(pattern)))
             self._child.expect(pattern)
-            lines = self._output.getvalue().split('\n')
+            lines = self._output.getvalue().splitlines()
             self._output.truncate(0)
             return lines[1:-1]
         except pexpect.exceptions.TIMEOUT:
