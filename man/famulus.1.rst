@@ -72,17 +72,17 @@ run [OPTIONS] <URI> <name> [<name>, ...]
 Run one or more tests/suites on target identified by its URI, which format is
 <scheme>://<resource>. The support schemes are:
 
-- "ssh": interact with the target via SSH. The resource is either a FQDN or an
+- *ssh*: interact with the target via SSH. The resource is either a FQDN or an
   IP address, associated with an username and a password. Example:
   "ssh://foo:secret@192.168.0.1".
-- "stty": interact with the target via a serial TTY. On Posix systems, the
+- *stty*: interact with the target via a serial TTY. On Posix systems, the
   resource is the path to the character device of the serial TTY, associated
   with the credentials ("stty://foo:secret@/dev/ttyS0"). On Microsoft Windows,
   it is the name of serial port ("stty://foo:secret@/COM4").
-- "telnet": interact with the target via Telnet (RFC 854). The resource is
+- *telnet*: interact with the target via Telnet (RFC 854). The resource is
   either a FQDN or an IP address, associated with an username and a password.
   Example: "telnet://foo:secret@192.168.0.1".
-- "uboot": interact with the target running U-Boot, connected via serial port.
+- *uboot*: interact with the target running U-Boot, connected via serial port.
   The resource is the same as for "stty", but no credentials are required.
   Examples: "uboot:///dev/ttyS0", "uboot:///COM4".
 
