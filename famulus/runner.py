@@ -126,10 +126,10 @@ class TestRunner(BaseRunner):
 
     def _check_output(self, test, output):
         if test.expect:
-            debug(_("Expected: '{}").format(test.expect))
+            debug(_("Expected: '{}'").format(test.expect))
             if not output:
                 raise ExpectationError(_("No output"))
-            debug(_("Received: '{}").format(output))
+            debug(_("Received: '{}'").format(output))
             if not re.match(test.expect, output):
                 raise ExpectationError(_("Output does not meet expectation"))
 

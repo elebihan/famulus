@@ -90,7 +90,7 @@ class SerialInteractor:
         :param string: character string to send
         :type string: str
         """
-        debug(_("Sending {}".format(string)))
+        debug(_("Sending '{}'".format(string)))
         self._child.send(string + self.line_term)
 
     def expect(self, pattern):
@@ -106,7 +106,7 @@ class SerialInteractor:
         found, all the data read is returned as a list of character strings.
         """
         try:
-            debug(_("Expecting {}".format(pattern)))
+            debug(_("Expecting '{}'".format(pattern)))
             self._child.expect(pattern)
             lines = self._output.getvalue().split('\n')
             self._output.truncate(0)
