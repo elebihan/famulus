@@ -32,6 +32,7 @@ import urllib.parse
 from .local import LocalClient
 from .ssh import SSHClient
 from .stty import STTYClient
+from .telnet import TelnetClient
 from .uboot import UBootClient
 from ..log import debug
 from gettext import gettext as _
@@ -50,6 +51,7 @@ class ClientFactory:
             "local": LocalClient,
             "ssh": SSHClient,
             "stty": STTYClient,
+            "telnet": TelnetClient,
             "uboot": UBootClient,
         }
 
