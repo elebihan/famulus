@@ -29,10 +29,8 @@
 """
 
 import os
-import re
 import sys
 from gettext import bindtextdomain, textdomain
-from gettext import gettext as _
 
 
 def get_data_dir():
@@ -107,32 +105,5 @@ def read_from_stdin():
     @rtype: list of str
     """
     return [l.strip() for l in sys.stdin.readlines()]
-
-
-class InvalidURIError(Exception):
-    """Error raised when an invalid URI is used"""
-    def __init__(self):
-        Exception.__init__(self, _("Invalid URI"))
-
-
-def validate_uri(uri):
-    """Validate an URI.
-
-    @param uri: URI to validate
-    @type uri: strip
-
-    @raise: InvalidURIError
-    """
-    if not re.match(r'^(?:[\w]+)://'
-                    r'(?:.+(?::.+)?@)?'
-                    r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|'
-                    r'/dev/tty(?:[A-Z0-9]+)|'
-                    r'/COM(?:[0-9]+)|'
-                    r'localhost|'
-                    r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'
-                    r'(?:/?|[/?]\S+)$',
-                    uri,
-                    re.IGNORECASE):
-        raise InvalidURIError
 
 # vim: ts=4 sw=4 sts=4 et ai
