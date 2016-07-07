@@ -1,0 +1,11 @@
+---
+name: test-uboot-version
+type: test
+category: bootloader
+author: Eric Le Bihan
+brief: Check if U-Boot version is valid
+description: >
+  This test checks if the version of U-Boot is correct.
+
+command: version
+expect: '\nU-Boot [0-9\.]+ .+'
