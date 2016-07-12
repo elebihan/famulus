@@ -97,6 +97,20 @@ _famulus_list_all_suites()
     fi
 }
 
+(( $+functions[_famulus_run] )) || _famulus_run()
+{
+    _arguments -w -S -s \
+               '(-F --event-format)'{-F,--event-format}'[set event logging format]:FORMAT:(human machine)' \
+               '1:URI:' \
+               '2: :->name'
+
+    if [[ "$state" == name ]]; then
+        _famulus_list_all_suites
+        _famulus_list_all_tests
+        compadd -a _famulus_all_tests _famulus_all_suites
+    fi
+}
+
 (( $+functions[_famulus_command] )) || _famulus_command()
 {
     local -a _famulus_cmds
@@ -104,6 +118,7 @@ _famulus_list_all_suites()
         "edit:edit a test or test suite"
         "list:list available tests or test suites"
         "new:create a new test or test suite"
+        "run:run one or more test or test suite"
         "show:show information about a test or test suite"
     )
     if (( CURRENT == 1 )); then
@@ -125,8 +140,10 @@ _famulus_list_all_suites()
 }
 
 _arguments -w -S -s \
-    '(-V --version)'{-v,--version}'' \
-    '(-D --debug)'{-d,--debug}'' \
+    '(-V --version)'{-v,--version}'[show program version number and exit]' \
+    '(-C --config)'{-C,--config}'[set path configuration file]:file:_files' \
+    '(-D --debug)'{-d,--debug}'[show debug messages]' \
+    '(-T --tests-path)'{-T,--tests-path}'[add path to tests/suites]:directory:_directories' \
     '*::famulus command:_famulus_command'
 
 # vim: ts=4 sts=4 sw=4 et ai

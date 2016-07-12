@@ -29,6 +29,7 @@
 """
 
 import os
+import sys
 from gettext import bindtextdomain, textdomain
 
 
@@ -59,5 +60,50 @@ def setup_i18n():
 
     bindtextdomain('famulus', locale_dir)
     textdomain('famulus')
+
+
+class CyclicGraphError(Exception):
+    """Error raised when graph is not acyclic"""
+
+
+def topological_sort(graph_unsorted):
+    """Perform a topological sort.
+
+    Perform a topological sort on a mapping between an item and its
+    dependencies.
+
+    @param graph_unsorted: a mapping between strings and list of strings
+    @type graph_unsorted: dict
+
+    @return: the sorted graph
+    @rtype: list of tuples
+
+    @raise: CyclicGraphError
+    """
+    graph_sorted = []
+
+    while graph_unsorted:
+        acyclic = False
+        for node, edges in list(graph_unsorted.items()):
+            for edge in edges:
+                if edge in graph_unsorted:
+                    break
+            else:
+                acyclic = True
+                del graph_unsorted[node]
+                graph_sorted.append((node, edges))
+        if not acyclic:
+            raise CyclicGraphError
+
+    return graph_sorted
+
+
+def read_from_stdin():
+    """Read lines from standard input and strip them.
+
+    @return: list of stripped lines
+    @rtype: list of str
+    """
+    return [l.strip() for l in sys.stdin.readlines()]
 
 # vim: ts=4 sw=4 sts=4 et ai

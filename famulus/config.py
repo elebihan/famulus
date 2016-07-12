@@ -39,6 +39,8 @@ class Configuration:
     def __init__(self):
         self.tests_paths = [DEFAULT_TESTS_PATH]
         self.editor = os.environ.get('EDITOR', 'vi')
+        self.username = None
+        self.password = None
 
     def load_from_file(self, filename):
         """Loads the configuration from a file
@@ -55,6 +57,8 @@ class Configuration:
         if value:
             self.tests_paths += map(lambda p: os.path.expanduser(p.strip()),
                                     value.split(','))
+        self.username = parser.get('Connection', 'Username', fallback=None)
+        self.password = parser.get('Connection', 'Password', fallback=None)
 
     def save_to_file(self, filename):
         """Saves the configuration to a file
@@ -65,6 +69,8 @@ class Configuration:
         parser = ConfigParser()
         parser.set('General', 'Editor', self.editor)
         parser.set('General', 'TestsPaths', ','.join(self.tests_paths))
+        parser.set('Connection', 'Username', self.username)
+        parser.set('Connection', 'Password', self.password)
         with open(filename, 'w+') as f:
             parser.write(f)
 

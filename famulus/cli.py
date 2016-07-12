@@ -29,15 +29,18 @@
 """
 
 import os
-import sys
 import argparse
 import traceback
 from famulus import __version__
-from famulus.utils import setup_i18n
+from famulus.utils import setup_i18n, read_from_stdin
+from famulus.uri import rebuild_uri
 from famulus.log import setup_logging, set_level
 from famulus.log import error, warning
 from famulus.config import Configuration, DEFAULT_TESTS_PATH
+from famulus.spec import SpecType
+from famulus.event import EventLoggerFormat
 from famulus.testmanager import TestManager
+from famulus.runner import run_suite
 from gettext import gettext as _
 
 DEFAULT_CONF_FILE = '~/.config/famulus.conf'
@@ -65,6 +68,12 @@ class Application:
                                   metavar=_('FILE'),
                                   default=os.path.expanduser(DEFAULT_CONF_FILE),
                                   help=_('set path to configuration file'))
+        self._parser.add_argument('-T', '--tests-path',
+                                  metavar=_('DIR'),
+                                  dest='tests_paths',
+                                  action='append',
+                                  default=[],
+                                  help=_('add path to tests/suites'))
 
         subparsers = self._parser.add_subparsers(dest='command')
         p = subparsers.add_parser('list',
@@ -114,6 +123,20 @@ class Application:
                        help=_('name of the object'))
         p.set_defaults(func=self._parse_cmd_edit)
 
+        p = subparsers.add_parser('run',
+                                  help=_('run one or more test/suite'))
+        p.add_argument('-F', '--event-format',
+                       choices=('human', 'machine'),
+                       default='human',
+                       help=_('set event logging format'))
+        p.add_argument('URI',
+                       help=_(('URI of the target')))
+        p.add_argument('names',
+                       nargs='+',
+                       metavar=_('NAME'),
+                       help=_('name of the object'))
+        p.set_defaults(func=self._parse_cmd_run)
+
     def _parse_cmd_list(self, args):
         if args.object == 'tests':
             items = self._test_mgr.tests
@@ -130,33 +153,39 @@ class Application:
             print(text.format(item))
 
     def _parse_cmd_new(self, args):
-        if args.object == 'test':
-            self._test_mgr.create_test_spec(args.name,
-                                            args.output,
-                                            args.template)
-        elif args.object == 'suite':
-            self._test_mgr.create_suite_spec(args.name,
-                                             args.output,
-                                             args.template)
-        else:
+        try:
+            self._test_mgr.create_spec(SpecType[args.object],
+                                       args.name,
+                                       args.output,
+                                       args.template)
+        except KeyError:
             self._parser.error(_('Invalid object'))
 
     def _parse_cmd_show(self, args):
-        if args.object == 'test':
-            text = self._test_mgr.describe_test(args.name)
-        elif args.object == 'suite':
-            text = self._test_mgr.describe_suite(args.name)
-        else:
+        try:
+            text = self._test_mgr.describe(SpecType[args.object], args.name)
+            print(text)
+        except KeyError:
             self._parser.error(_('Invalid object'))
-        print(text)
 
     def _parse_cmd_edit(self, args):
-        if args.object == 'test':
-            self._test_mgr.edit_test_spec(args.name)
-        elif args.object == 'suite':
-            self._test_mgr.edit_suite_spec(args.name)
-        else:
+        try:
+            self._test_mgr.edit_spec(SpecType[args.object], args.name)
+        except KeyError:
             self._parser.error(_('Invalid object'))
+
+    def _parse_cmd_run(self, args):
+        event_format = EventLoggerFormat.parse(args.event_format)
+        uri = rebuild_uri(args.URI, self._config, ('uboot'))
+        names = read_from_stdin() if args.names[0] == '-' else args.names
+        suite = self._test_mgr.create_suite_for_names(names)
+        result = run_suite(suite, uri, event_format)
+        if result.is_failure:
+            rc = 6
+            error(_("Some tests/suites failed"))
+        else:
+            rc = 0
+        self._parser.exit(rc)
 
     def run(self):
         """Run the application"""
@@ -174,6 +203,9 @@ class Application:
             warning(_("Can not find configuration file. Using defaults."))
 
         for path in self._config.tests_paths:
+            self._test_mgr.add_search_path(path)
+
+        for path in args.tests_paths:
             self._test_mgr.add_search_path(path)
 
         self._test_mgr.editor = self._config.editor
