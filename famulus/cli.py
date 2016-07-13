@@ -40,6 +40,7 @@ from famulus.config import Configuration, DEFAULT_TESTS_PATH
 from famulus.spec import SpecType
 from famulus.event import EventLoggerFormat
 from famulus.testmanager import TestManager
+from famulus.command import run_commands
 from famulus.runner import run_suite
 from gettext import gettext as _
 
@@ -137,6 +138,20 @@ class Application:
                        help=_('name of the object'))
         p.set_defaults(func=self._parse_cmd_run)
 
+        p = subparsers.add_parser('execute',
+                                  help=_('execute one or more commands'))
+        p.add_argument('-c', '--scissors',
+                       dest='delimited',
+                       action='store_true',
+                       help=_('delimit command output with a scissors line'))
+        p.add_argument('URI',
+                       help=_(('URI of the target')))
+        p.add_argument('commands',
+                       nargs='+',
+                       metavar=_('COMMAND'),
+                       help=_('command to execute'))
+        p.set_defaults(func=self._parse_cmd_execute)
+
     def _parse_cmd_list(self, args):
         if args.object == 'tests':
             items = self._test_mgr.tests
@@ -185,6 +200,17 @@ class Application:
             error(_("Some tests/suites failed"))
         else:
             rc = 0
+        self._parser.exit(rc)
+
+    def _parse_cmd_execute(self, args):
+        uri = rebuild_uri(args.URI, self._config, ('uboot'))
+        commands = read_from_stdin() if args.commands[0] == '-' else args.commands
+        try:
+            run_commands(uri, commands, args.delimited)
+            rc = 0
+        except Exception as e:
+            rc = 7
+            error(_("Some commands failed ()").format(e))
         self._parser.exit(rc)
 
     def run(self):
