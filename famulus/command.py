@@ -81,4 +81,26 @@ class CommandRunner:
         return client.execute(command)
 
 
+def run_commands(uri, commands, delimited=False):
+    """Run a batch of commands on local/remote machine.
+
+    @param uri: URI of the remote machine
+    @type uti: str
+
+    @param commands: commands to execute
+    @type commands: list of str
+
+    @param delimited: if True, print a text delimeter between commands.
+    @type delimted: bool
+    """
+
+    runner = CommandRunner(uri)
+    runner.setup()
+    for command in commands:
+        output = runner.run(command)
+        if delimited:
+            output = "--8<--\n{}\n-->8--".format(output)
+        print(output)
+    runner.teardown()
+
 # vim: ts=4 sw=4 sts=4 et ai
