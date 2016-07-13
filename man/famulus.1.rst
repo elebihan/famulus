@@ -17,6 +17,8 @@ famulus [OPTIONS] <command> [<argument>,...]
 
 famulus edit [OPTIONS] {suites|tests} <name>
 
+famulus execute [OPTIONS] <URI> <command> [<command>, ...]
+
 famulus list [OPTIONS] {suites|tests}
 
 famulus new [OPTIONS] {suite|test} <name>
@@ -47,6 +49,16 @@ edit [OPTIONS] {suite|test} <name>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Edit the specification of a test or suite.
+
+execute [OPTIONS] <URI> <command> [<command>, ...]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Execute one or more commands on target identified by its URI, which format is
+<scheme>://<resource>. See "run" command for supported schemes.
+
+Available options:
+
+-c, --scissors    delimit command output with a scissors line
 
 list [OPTIONS] {suites|tests}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -101,6 +113,7 @@ show [OPTIONS] {suite|test} <name>
 
 Print information about a test or a suite.
 
+
 ENVIRONMENT VARIABLES
 =====================
 
@@ -116,6 +129,11 @@ EXAMPLES
 Run suites "foo" and "baz" on machine whose IP address is 192.168.0.1 via SSH::
 
   $ famulus run ssh://192.168.0.1 foo baz
+
+Execute commands "version" and "mtdparts" on machine running U-Boot, connected
+on serial port `/dev/ttyS0`::
+
+  $ famulus execute uboot:///dev/ttyS0 version mtdparts
 
 SEE ALSO
 ========
