@@ -111,11 +111,20 @@ _famulus_list_all_suites()
     fi
 }
 
+(( $+functions[_famulus_execute] )) || _famulus_execute()
+{
+    _arguments -w -S -s \
+               '(-c --scissors)'{-c,--scissors}'[delimit command output with a scissors line]' \
+               '1:URI:' \
+               '2:command'
+}
+
 (( $+functions[_famulus_command] )) || _famulus_command()
 {
     local -a _famulus_cmds
     _famulus_cmds=(
         "edit:edit a test or test suite"
+        "execute:execute one or more commands on host/target"
         "list:list available tests or test suites"
         "new:create a new test or test suite"
         "run:run one or more test or test suite"
