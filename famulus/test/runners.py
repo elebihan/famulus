@@ -32,7 +32,7 @@
 import re
 from ..event import EventLogger, TestEvent
 from ..command import CommandRunnerFactory
-from .result import TestResult, SuiteResult, TestStatus
+from .results import TestResult, SuiteResult, TestStatus
 from ..time import Stopwatch
 from ..log import debug
 from gettext import gettext as _
