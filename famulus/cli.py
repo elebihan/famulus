@@ -37,11 +37,11 @@ from famulus.uri import rebuild_uri
 from famulus.log import setup_logging, set_level
 from famulus.log import error, warning
 from famulus.config import Configuration, DEFAULT_TESTS_PATH
-from famulus.spec import SpecType
+from famulus.test.specs import SpecType
 from famulus.event import EventLoggerFormat
-from famulus.testmanager import TestManager
+from famulus.test.management import TestManager
 from famulus.command import run_commands
-from famulus.runner import run_suite
+from famulus.test.runners import run_suite
 from gettext import gettext as _
 
 DEFAULT_CONF_FILE = '~/.config/famulus.conf'

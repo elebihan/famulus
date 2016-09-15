@@ -19,8 +19,8 @@
 #
 
 """
-   famulus.test
-   ````````````
+   famulus.test.base
+   `````````````````
 
    Classes and helper functions for tests and suites.
 
@@ -28,7 +28,6 @@
    :license: GPLv3+
 """
 
-from enum import Enum
 from gettext import gettext as _
 
 

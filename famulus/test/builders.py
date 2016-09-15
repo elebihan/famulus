@@ -19,8 +19,8 @@
 #
 
 """
-   famulus.suitebuilder
-   ````````````````````
+   famulus.test.builders
+   `````````````````````
 
    Classes and helper functions to build suites
 
@@ -28,9 +28,9 @@
    :license: GPLv3+
 """
 
-from .log import debug
+from ..log import debug
 from .base import Test, Suite
-from .utils import topological_sort, CyclicGraphError
+from ..utils import topological_sort, CyclicGraphError
 from gettext import gettext as _
 
 

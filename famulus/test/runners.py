@@ -19,8 +19,8 @@
 #
 
 """
-   famulus.runner
-   ``````````````
+   famulus.test.runners
+   ````````````````````
 
    Classes and helper functions to run tests and suites
 
@@ -30,11 +30,11 @@
 """
 
 import re
-from .event import EventLogger, TestEvent
-from .command import CommandRunnerFactory
+from ..event import EventLogger, TestEvent
+from ..command import CommandRunnerFactory
 from .result import TestResult, SuiteResult, TestStatus
-from .time import Stopwatch
-from .log import debug
+from ..time import Stopwatch
+from ..log import debug
 from gettext import gettext as _
 
 
