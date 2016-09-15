@@ -29,7 +29,7 @@
 """
 
 from .log import debug
-from .test import Test, Suite
+from .base import Test, Suite
 from .utils import topological_sort, CyclicGraphError
 from gettext import gettext as _
 
