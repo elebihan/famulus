@@ -40,8 +40,7 @@ from famulus.config import Configuration, DEFAULT_TESTS_PATH
 from famulus.test.specs import SpecType
 from famulus.test.events import EventLoggerFormat
 from famulus.test.management import TestManager
-from famulus.command import run_commands
-from famulus.test.runners import run_suite
+from famulus.directing import run_commands, run_suite
 from gettext import gettext as _
 
 DEFAULT_CONF_FILE = '~/.config/famulus.conf'

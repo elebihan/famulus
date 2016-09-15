@@ -173,30 +173,4 @@ class SuiteRunner(BaseRunner):
         return s_runner.run(suite)
 
 
-def run_suite(suite, uri, format):
-    """Run suite for remote machine.
-
-    @param suite: suite to run
-    @type suite: Suite
-
-    @param uri: URI of the remote machine
-    @type uri: str
-
-    @param format: event logger format
-    @type format: EventLoggerFormat
-
-    @return: result of the execution of the suite
-    @rtype: SuiteResult
-    """
-    factory = CommandRunnerFactory()
-    runner = SuiteRunner(factory.create_command_runner_for_uri(uri),
-                         EventLogger(format))
-    runner.cmd_runner.setup()
-    try:
-        result = runner.run(suite)
-    finally:
-        runner.cmd_runner.teardown()
-    return result
-
-
 # vim: ts=4 sw=4 sts=4 et ai
