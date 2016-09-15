@@ -19,8 +19,8 @@
 #
 
 """
-   famulus.spec
-   ````````````
+   famulus.test.specs
+   ``````````````````
 
    Classes and helper functions for test and suite specifications
 

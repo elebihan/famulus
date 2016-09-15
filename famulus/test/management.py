@@ -19,8 +19,8 @@
 #
 
 """
-   famulus.testmanager
-   ```````````````````
+   famulus.test.management
+   ```````````````````````
 
    Classes and helper functions to manage test and suite files.
 
@@ -31,10 +31,10 @@
 import os
 import yaml
 import shutil
-from .log import debug, warning
-from .spec import SpecType, TestSpec, SuiteSpec
-from .suitebuilder import SuiteBuilder
-from .utils import get_data_dir
+from ..log import debug, warning
+from .specs import SpecType, TestSpec, SuiteSpec
+from .builders import SuiteBuilder
+from ..utils import get_data_dir
 from subprocess import check_call
 from gettext import gettext as _
 

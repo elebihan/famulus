@@ -19,8 +19,8 @@
 #
 
 """
-   famulus.runner
-   ``````````````
+   famulus.test.runners
+   ````````````````````
 
    Classes and helper functions to run tests and suites
 
@@ -30,11 +30,11 @@
 """
 
 import re
-from .event import EventLogger, TestEvent
-from .command import CommandRunner
-from .result import TestResult, SuiteResult, TestStatus
-from .time import Stopwatch
-from .log import debug
+from .events import EventLogger, TestEvent
+from ..command import CommandRunnerFactory
+from .results import TestResult, SuiteResult, TestStatus
+from ..time import Stopwatch
+from ..log import debug
 from gettext import gettext as _
 
 
@@ -171,30 +171,6 @@ class SuiteRunner(BaseRunner):
     def _run_suite(self, suite):
         s_runner = SuiteRunner(self.cmd_runner, self.event_handler)
         return s_runner.run(suite)
-
-
-def run_suite(suite, uri, format):
-    """Run suite for remote machine.
-
-    @param suite: suite to run
-    @type suite: Suite
-
-    @param uri: URI of the remote machine
-    @type uri: str
-
-    @param format: event logger format
-    @type format: EventLoggerFormat
-
-    @return: result of the execution of the suite
-    @rtype: SuiteResult
-    """
-    runner = SuiteRunner(CommandRunner(uri), EventLogger(format))
-    runner.cmd_runner.setup()
-    try:
-        result = runner.run(suite)
-    finally:
-        runner.cmd_runner.teardown()
-    return result
 
 
 # vim: ts=4 sw=4 sts=4 et ai

@@ -19,8 +19,8 @@
 #
 
 """
-   famulus.result
-   ``````````````
+   famulus.test.results
+   ````````````````````
 
    Classes and helper functions for test and suite results
 
