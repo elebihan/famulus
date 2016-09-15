@@ -30,7 +30,7 @@
 """
 
 import re
-from ..event import EventLogger, TestEvent
+from .events import EventLogger, TestEvent
 from ..command import CommandRunnerFactory
 from .results import TestResult, SuiteResult, TestStatus
 from ..time import Stopwatch

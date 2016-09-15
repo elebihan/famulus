@@ -38,7 +38,7 @@ from famulus.log import setup_logging, set_level
 from famulus.log import error, warning
 from famulus.config import Configuration, DEFAULT_TESTS_PATH
 from famulus.test.specs import SpecType
-from famulus.event import EventLoggerFormat
+from famulus.test.events import EventLoggerFormat
 from famulus.test.management import TestManager
 from famulus.command import run_commands
 from famulus.test.runners import run_suite

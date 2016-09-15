@@ -19,8 +19,8 @@
 #
 
 """
-   famulus.event
-   `````````````
+   famulus.test.events
+   ```````````````````
 
    Classes and helper functions for events occuring during test/suite
    execution.
