@@ -35,17 +35,35 @@ from .clients.factory import ClientFactory
 from gettext import gettext as _
 
 
+class CommandRunnerFactory:
+    """Create command runners"""
+    def __init__(self):
+        self._client_factory = ClientFactory()
+
+    def create_command_runner_for_uri(self, uri):
+        """Create a command runner suitable for a given URI scheme
+
+        @param uri: URI of the remote machine
+        @type uri: str
+        """
+        local_client = self._client_factory.create_client_for_uri('local://localhost')
+        remote_client = self._client_factory.create_client_for_uri(uri)
+        return CommandRunner(local_client, remote_client)
+
+
 class CommandRunner:
     """Run commands on local/remote machine.
 
-    @param uri: URI of the remote machine
-    @type uri: str
+    @param local_client: client to use for local commands
+    @type local_client: Client
+
+    @param remote_client: client to use for remote commands
+    @type remote_client: Client
     """
-    def __init__(self, uri):
-        factory = ClientFactory()
+    def __init__(self, local_client, remote_client):
         self._clients = {
-            'local': factory.create_client_for_uri('local://localhost'),
-            'remote': factory.create_client_for_uri(uri),
+            'local': local_client,
+            'remote': remote_client,
         }
 
     def setup(self):
@@ -93,8 +111,8 @@ def run_commands(uri, commands, delimited=False):
     @param delimited: if True, print a text delimeter between commands.
     @type delimted: bool
     """
-
-    runner = CommandRunner(uri)
+    factory = CommandRunnerFactory()
+    runner = factory.create_command_runner_for_uri(uri)
     runner.setup()
     for command in commands:
         output = runner.run(command)

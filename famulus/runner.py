@@ -31,7 +31,7 @@
 
 import re
 from .event import EventLogger, TestEvent
-from .command import CommandRunner
+from .command import CommandRunnerFactory
 from .result import TestResult, SuiteResult, TestStatus
 from .time import Stopwatch
 from .log import debug
@@ -188,7 +188,9 @@ def run_suite(suite, uri, format):
     @return: result of the execution of the suite
     @rtype: SuiteResult
     """
-    runner = SuiteRunner(CommandRunner(uri), EventLogger(format))
+    factory = CommandRunnerFactory()
+    runner = SuiteRunner(factory.create_command_runner_for_uri(uri),
+                         EventLogger(format))
     runner.cmd_runner.setup()
     try:
         result = runner.run(suite)
